@@ -2,17 +2,32 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["referentialIntegrity"]
 }
+
 datasource db {
-  provider = "mysql"
-  url = env("DATABASE_URL")
+  provider             = "mysql"
+  url                  = env("DATABASE_URL")
   referentialIntegrity = "prisma"
 }
 
 model Post {
-    id      String @id @default(cuid())
-    title   String
-    content String
+  id      String @id @default(cuid())
+  title   String
+  content String
+}
+
+model User {
+  id           String @id @default(cuid())
+  name         String
+  age          Int
+  gender       Gender
+  interestedIn Gender
+  spotifyToken String
+}
+
+enum Gender {
+  MALE
+  FEMALE
 }
