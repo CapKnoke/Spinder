@@ -1,12 +1,35 @@
-import { SafeAreaView, View, Text, TouchableOpacity, TextInput } from "react-native";
-import { FlashList } from "@shopify/flash-list";
-import type { inferProcedureOutput } from "@trpc/server";
-import type { AppRouter } from "@acme/api";
-import { trpc } from "../utils/trpc";
-import React from "react";
+import { SafeAreaView, View, Text, TouchableOpacity, TextInput, Button } from 'react-native';
+import { FlashList } from '@shopify/flash-list';
+import type { inferProcedureOutput } from '@trpc/server';
+import type { AppRouter } from '@acme/api';
+import { trpc } from '../utils/trpc';
+import React from 'react';
+import { useAuth0 } from 'react-native-auth0';
+
+const LoginButton = () => {
+  const { authorize, clearSession, user } = useAuth0();
+
+  const handleLogin = async () => {
+    try {
+      await authorize();
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await clearSession();
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  return <Button onPress={handleLogin} title="Log in" />;
+};
 
 const PostCard: React.FC<{
-  post: inferProcedureOutput<AppRouter["post"]["all"]>[number];
+  post: inferProcedureOutput<AppRouter['post']['all']>[number];
 }> = ({ post }) => {
   return (
     <View className="p-4 border-2 border-gray-500 rounded-lg">
@@ -24,8 +47,8 @@ const CreatePost: React.FC = () => {
     },
   });
 
-  const [title, onChangeTitle] = React.useState("");
-  const [content, onChangeContent] = React.useState("");
+  const [title, onChangeTitle] = React.useState('');
+  const [content, onChangeContent] = React.useState('');
 
   return (
     <View className="p-4 border-t-2 border-gray-500 flex flex-col">
@@ -60,10 +83,11 @@ export const HomeScreen = () => {
 
   return (
     <SafeAreaView>
-      <View className="h-full w-full p-4">
-        <Text className="text-5xl font-bold mx-auto pb-2">
-          Create <Text className="text-indigo-500">T3</Text> Turbo
-        </Text>
+      <View className="h-full w-full p-4 pt-9">
+        <Text className="text-5xl font-bold mx-auto p-2">Tinder/Spotify clone</Text>
+        <View className="flex justify-center">
+          <LoginButton />
+        </View>
 
         <View className="py-2">
           {showPost ? (
@@ -80,9 +104,9 @@ export const HomeScreen = () => {
           data={postQuery.data}
           estimatedItemSize={20}
           ItemSeparatorComponent={() => <View className="h-2" />}
-          renderItem={(p) => (
-            <TouchableOpacity onPress={() => setShowPost(p.item.id)}>
-              <PostCard post={p.item} />
+          renderItem={({ item }) => (
+            <TouchableOpacity onPress={() => setShowPost(item.id)}>
+              <PostCard post={item} />
             </TouchableOpacity>
           )}
         />
