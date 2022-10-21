@@ -32,14 +32,6 @@
       "eas": {
         "projectId": "3c33561e-f1f2-47c8-b4ca-8feca0556c08"
       }
-    },
-    "plugins": [
-      [
-        "react-native-auth0",
-        {
-          "domain": "dev-ri67kluklvpws5t7.eu.auth0.com"
-        }
-      ]
-    ]
+    }
   }
 }

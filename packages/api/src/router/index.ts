@@ -1,11 +1,11 @@
-// src/server/router/index.ts
-import { t } from "../trpc";
+import { t } from '../trpc';
 
-import { postRouter } from "./post";
+import { postRouter } from './post';
+import { spotifyRouter } from './spotify';
 
 export const appRouter = t.router({
   post: postRouter,
+  spotify: spotifyRouter,
 });
 
-// export type definition of API
 export type AppRouter = typeof appRouter;
