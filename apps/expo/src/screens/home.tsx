@@ -4,29 +4,6 @@ import type { inferProcedureOutput } from '@trpc/server';
 import type { AppRouter } from '@acme/api';
 import { trpc } from '../utils/trpc';
 import React from 'react';
-import { useAuth0 } from 'react-native-auth0';
-
-const LoginButton = () => {
-  const { authorize, clearSession, user } = useAuth0();
-
-  const handleLogin = async () => {
-    try {
-      await authorize();
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
-  const handleLogout = async () => {
-    try {
-      await clearSession();
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
-  return <Button onPress={handleLogin} title="Log in" />;
-};
 
 const PostCard: React.FC<{
   post: inferProcedureOutput<AppRouter['post']['all']>[number];
@@ -85,9 +62,6 @@ export const HomeScreen = () => {
     <SafeAreaView>
       <View className="h-full w-full p-4 pt-9">
         <Text className="text-5xl font-bold mx-auto p-2">Tinder/Spotify clone</Text>
-        <View className="flex justify-center">
-          <LoginButton />
-        </View>
 
         <View className="py-2">
           {showPost ? (
