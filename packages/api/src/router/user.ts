@@ -12,7 +12,7 @@ export const userRouter = t.router({
     .input(
       z.object({
         id: z.string(),
-        displayName: z.string(),
+        displayName: z.string().optional(),
         email: z.string().email(),
         emailVerified: z.boolean(),
       })
