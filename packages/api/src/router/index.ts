@@ -1,11 +1,13 @@
 import { t } from '../trpc';
 
 import { postRouter } from './post';
-import { spotifyRouter } from './spotify';
+import { credentialsRouter } from './credentials';
+import { userRouter } from './user';
 
 export const appRouter = t.router({
   post: postRouter,
-  spotify: spotifyRouter,
+  user: userRouter,
+  credentials: credentialsRouter,
 });
 
 export type AppRouter = typeof appRouter;

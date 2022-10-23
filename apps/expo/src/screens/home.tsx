@@ -1,9 +1,13 @@
-import { SafeAreaView, View, Text, TouchableOpacity, TextInput } from 'react-native';
+import * as React from 'react';
+import { View, Text, TouchableOpacity, TextInput, Button } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { FlashList } from '@shopify/flash-list';
+
 import type { inferProcedureOutput } from '@trpc/server';
 import type { AppRouter } from '@acme/api';
+
 import { trpc } from '../utils/trpc';
-import React from 'react';
+import useAuth from '../hooks/useAuth';
 
 const PostCard: React.FC<{
   post: inferProcedureOutput<AppRouter['post']['all']>[number];
@@ -54,15 +58,18 @@ const CreatePost: React.FC = () => {
   );
 };
 
-export const HomeScreen = () => {
+const HomeScreen: React.FC = () => {
   const postQuery = trpc.post.all.useQuery();
   const [showPost, setShowPost] = React.useState<string | null>(null);
+  const { logout } = useAuth();
 
   return (
     <SafeAreaView>
-      <View className="h-full w-full p-4 pt-9">
+      <View className="h-full w-full p-4">
         <Text className="text-5xl font-bold mx-auto p-2">Tinder/Spotify clone</Text>
-
+        <View className="py-2">
+          <Button title="Log out" onPress={() => logout()} />
+        </View>
         <View className="py-2">
           {showPost ? (
             <Text>
@@ -90,3 +97,5 @@ export const HomeScreen = () => {
     </SafeAreaView>
   );
 };
+
+export default HomeScreen;

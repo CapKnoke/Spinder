@@ -1,6 +1,6 @@
 // @ts-check
-import { env } from "./src/env/server.mjs";
-import withTM from "next-transpile-modules";
+import { env } from './src/env/server.mjs';
+import withTM from 'next-transpile-modules';
 
 /**
  * Don't be scared of the generics here.
@@ -14,7 +14,7 @@ function defineNextConfig(config) {
   return config;
 }
 
-export default withTM(["@acme/api", "@acme/db"])(
+export default withTM(['@acme/api', '@acme/db'])(
   defineNextConfig({
     reactStrictMode: true,
     swcMinify: true,
