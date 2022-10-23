@@ -17,7 +17,7 @@ export const userRouter = t.router({
         emailVerified: z.boolean(),
       })
     )
-    .query(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }) => {
       const user = await ctx.prisma.user.findUnique({ where: { id: input.id } });
       if (user) return user;
       return ctx.prisma.user.create({ data: input });

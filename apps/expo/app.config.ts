@@ -7,7 +7,7 @@ const config: ExpoConfig = {
   version: '1.0.0',
   orientation: 'portrait',
   icon: './assets/icon.png',
-  userInterfaceStyle: 'light',
+  userInterfaceStyle: 'dark',
   splash: {
     image: './assets/splash.png',
     resizeMode: 'contain',
@@ -36,6 +36,8 @@ const config: ExpoConfig = {
     },
     apiBaseUrl: process.env.API_BASE_URL,
   },
+  currentFullName: '@capknoke/tinder-clone',
+  originalFullName: '@capknoke/tinder-clone',
 };
 
 export default config;

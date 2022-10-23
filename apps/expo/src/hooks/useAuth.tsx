@@ -7,11 +7,13 @@ import {
   onAuthStateChanged,
   signInWithCredential,
   signOut,
-  User,
 } from 'firebase/auth';
+import { trpc } from '../utils/trpc';
+import { inferProcedureOutput } from '@trpc/server';
+import { AppRouter } from '@acme/api';
 
 interface IAuthContext {
-  user: User | null;
+  user: inferProcedureOutput<AppRouter['user']['findOrCreate']> | null;
   error: Error | null;
   loading: boolean;
   signInWithGoogle: () => Promise<void>;
@@ -21,28 +23,41 @@ interface IAuthContext {
 const AuthContext = createContext<IAuthContext>({} as IAuthContext);
 
 export const AuthProvider: React.FC<{ children: ReactNode[] | ReactNode }> = ({ children }) => {
-  const [request, _, promptAsync] = useAuthRequest({
+  const [_req, _res, promptAsync] = useAuthRequest({
     expoClientId: '892524085460-pc1oivmas45e42tpfhrvv1f0gsdhtdk7.apps.googleusercontent.com',
     webClientId: '892524085460-rsa3u2bmr1c8o0il3astujccgs02hfa8.apps.googleusercontent.com',
     androidClientId: '892524085460-rsa3u2bmr1c8o0il3astujccgs02hfa8.apps.googleusercontent.com',
     scopes: ['profile', 'email'],
   });
-  const [user, setUser] = useState<User | null>(null);
-  const [error, setError] = useState<Error | null>(null);
-  const [loadingInitial, setLoadingInitial] = useState(true);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [user, setUser] = useState<inferProcedureOutput<AppRouter['user']['findOrCreate']> | null>(
+    null
+  );
 
   WebBrowser.maybeCompleteAuthSession();
 
+  const [error, setError] = useState<Error | null>(null);
+  const [loadingInitial, setLoadingInitial] = useState(true);
+  const [loading, setLoading] = useState<boolean>(false);
+  const findOrCreateUser = trpc.user.findOrCreate.useMutation();
+
   useEffect(
     () =>
-      onAuthStateChanged(auth, (user) => {
+      onAuthStateChanged(auth, async (user) => {
         if (user) {
-          console.dir({ user });
-          setUser(user);
+          await findOrCreateUser
+            .mutateAsync({
+              id: user.uid,
+              displayName: user.displayName || 'No Name',
+              email: user.email || 'no@email.com',
+              emailVerified: user.emailVerified,
+            })
+            .then((data) => {
+              setUser(data);
+            });
         } else {
           setUser(null);
         }
+        setLoading(false);
         setLoadingInitial(false);
       }),
     []
@@ -71,9 +86,10 @@ export const AuthProvider: React.FC<{ children: ReactNode[] | ReactNode }> = ({ 
       if (err instanceof Error) {
         setError(err);
       }
-    } finally {
-      setLoading(false);
     }
+    // } finally {
+    //   setLoading(false);
+    // }
   };
 
   const memoedValue = useMemo(
