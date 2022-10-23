@@ -8,13 +8,9 @@ import { z } from 'zod';
 export const serverSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']),
   SPOTIFY_CLIENT_ID: z.string(),
-  SPOTIFY_CLIENT_SECRET: z.string(),
 });
 
 export const deployedServerSchema = z.object({
-  NODE_ENV: z.enum(['production']),
-  SPOTIFY_CLIENT_ID: z.string(),
-  SPOTIFY_CLIENT_SECRET: z.string(),
   DATABASE_URL: z.string().url(),
 });
 
