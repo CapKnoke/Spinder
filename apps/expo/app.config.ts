@@ -36,8 +36,6 @@ const config: ExpoConfig = {
     },
     apiBaseUrl: process.env.API_BASE_URL,
   },
-  currentFullName: '@capknoke/tinder-clone',
-  originalFullName: '@capknoke/tinder-clone',
 };
 
 export default config;

@@ -47,7 +47,7 @@ export const AuthProvider: React.FC<{ children: ReactNode[] | ReactNode }> = ({ 
           await findOrCreateUser
             .mutateAsync({
               id: user.uid,
-              displayName: user.displayName || 'No Name',
+              displayName: user.displayName,
               email: user.email || 'no@email.com',
               emailVerified: user.emailVerified,
             })
@@ -87,9 +87,6 @@ export const AuthProvider: React.FC<{ children: ReactNode[] | ReactNode }> = ({ 
         setError(err);
       }
     }
-    // } finally {
-    //   setLoading(false);
-    // }
   };
 
   const memoedValue = useMemo(

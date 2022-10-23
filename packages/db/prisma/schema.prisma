@@ -22,7 +22,7 @@ model User {
   id              String        @id
   email           String        @unique
   emailVerified   Boolean       @default(false)
-  displayName     String
+  displayName     String?
   age             Int?
   gender          Gender?
   interestedIn    InterestedIn?
