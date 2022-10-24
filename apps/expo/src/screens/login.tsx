@@ -3,13 +3,20 @@ import React, { useEffect } from 'react';
 import useAuth from '../hooks/useAuth';
 
 const LoginScreen: React.FC = () => {
-  const { signInWithGoogle, error } = useAuth();
-  useEffect(() => {
-    if (error) {
-      console.error(error);
-    }
-  }, [error]);
-  return (
+  const { signInWithGoogle, googleUserInfo } = useAuth();
+  return !googleUserInfo ? (
+    <View style={styles.screen}>
+      <ImageBackground
+        resizeMode="cover"
+        style={styles.background}
+        source={{ uri: 'https://tinder.com/static/tinder.png' }}
+      >
+        <TouchableOpacity style={styles.button} onPress={() => signInWithGoogle()}>
+          <Text style={styles.buttonText}>Sign in & start swiping</Text>
+        </TouchableOpacity>
+      </ImageBackground>
+    </View>
+  ) : (
     <View style={styles.screen}>
       <ImageBackground
         resizeMode="cover"

@@ -61,7 +61,7 @@ const CreatePost: React.FC = () => {
 const HomeScreen: React.FC = () => {
   const postQuery = trpc.post.all.useQuery();
   const [showPost, setShowPost] = React.useState<string | null>(null);
-  const { logout } = useAuth();
+  const { logout, error } = useAuth();
 
   return (
     <SafeAreaView>
@@ -79,8 +79,13 @@ const HomeScreen: React.FC = () => {
           ) : (
             <Text className="italic font-semibold">Press on a post</Text>
           )}
+          {error ? (
+            <>
+              <Text>Error:</Text>
+              <Text>{error.message}</Text>
+            </>
+          ) : null}
         </View>
-
         <FlashList
           data={postQuery.data}
           estimatedItemSize={20}
@@ -91,7 +96,6 @@ const HomeScreen: React.FC = () => {
             </TouchableOpacity>
           )}
         />
-
         <CreatePost />
       </View>
     </SafeAreaView>

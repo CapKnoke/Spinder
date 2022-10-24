@@ -3,19 +3,19 @@ import React from 'react';
 import { TRPCProvider } from './utils/trpc';
 import { NavigationContainer } from '@react-navigation/native';
 import { AuthProvider } from './hooks/useAuth';
-import StackNavigation from './StackNavigation';
+import StackNavigation from './screens/navigation';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 export const App = () => {
   return (
     <TRPCProvider>
       <AuthProvider>
-        <NavigationContainer>
-          <SafeAreaProvider>
+        <SafeAreaProvider>
+          <NavigationContainer>
             <StackNavigation />
             <StatusBar />
-          </SafeAreaProvider>
-        </NavigationContainer>
+          </NavigationContainer>
+        </SafeAreaProvider>
       </AuthProvider>
     </TRPCProvider>
   );

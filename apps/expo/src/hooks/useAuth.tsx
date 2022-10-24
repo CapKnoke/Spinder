@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useMemo, ReactNode } from 'react';
 import { useAuthRequest } from 'expo-auth-session/providers/google';
+import * as AuthSession from 'expo-auth-session';
 import * as WebBrowser from 'expo-web-browser';
 import { auth } from '../lib/firebase';
 import {
@@ -7,15 +8,25 @@ import {
   onAuthStateChanged,
   signInWithCredential,
   signOut,
+  User as FireBaseUser,
 } from 'firebase/auth';
 import { trpc } from '../utils/trpc';
-import { inferProcedureOutput } from '@trpc/server';
-import { AppRouter } from '@acme/api';
+import Constants from 'expo-constants';
+import { User } from '../types/trpc';
+
+const EXPO_REDIRECT_PARAMS = { useProxy: true, projectNameForProxy: '@capknoke/tinder-clone' };
+const NATIVE_REDIRECT_PARAMS = { native: 'dev.sindrebakken.tinderclone://' };
+const REDIRECT_PARAMS =
+  Constants.appOwnership === 'expo' ? EXPO_REDIRECT_PARAMS : NATIVE_REDIRECT_PARAMS;
+const redirectUri = AuthSession.makeRedirectUri(REDIRECT_PARAMS);
 
 interface IAuthContext {
-  user: inferProcedureOutput<AppRouter['user']['findOrCreate']> | null;
+  user: User | null;
+  setUser: React.Dispatch<React.SetStateAction<User | null>>;
+  googleUserInfo: FireBaseUser | null;
   error: Error | null;
   loading: boolean;
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   signInWithGoogle: () => Promise<void>;
   logout: () => void;
 }
@@ -23,80 +34,64 @@ interface IAuthContext {
 const AuthContext = createContext<IAuthContext>({} as IAuthContext);
 
 export const AuthProvider: React.FC<{ children: ReactNode[] | ReactNode }> = ({ children }) => {
-  const [_req, _res, promptAsync] = useAuthRequest({
+  const [_req, response, promptAsync] = useAuthRequest({
     expoClientId: '892524085460-pc1oivmas45e42tpfhrvv1f0gsdhtdk7.apps.googleusercontent.com',
     webClientId: '892524085460-rsa3u2bmr1c8o0il3astujccgs02hfa8.apps.googleusercontent.com',
     androidClientId: '892524085460-rsa3u2bmr1c8o0il3astujccgs02hfa8.apps.googleusercontent.com',
     scopes: ['profile', 'email'],
+    redirectUri,
   });
-  const [user, setUser] = useState<inferProcedureOutput<AppRouter['user']['findOrCreate']> | null>(
-    null
-  );
 
   WebBrowser.maybeCompleteAuthSession();
 
+  const [googleUserInfo, setGoogleUserInfo] = useState<FireBaseUser | null>(null);
   const [error, setError] = useState<Error | null>(null);
-  const [loadingInitial, setLoadingInitial] = useState(true);
   const [loading, setLoading] = useState<boolean>(false);
-  const findOrCreateUser = trpc.user.findOrCreate.useMutation();
+  const [user, setUser] = useState<User | null>(null);
 
-  useEffect(
-    () =>
-      onAuthStateChanged(auth, async (user) => {
-        if (user) {
-          await findOrCreateUser
-            .mutateAsync({
-              id: user.uid,
-              displayName: user.displayName,
-              email: user.email || 'no@email.com',
-              emailVerified: user.emailVerified,
-            })
-            .then((data) => {
-              setUser(data);
-            });
-        } else {
-          setUser(null);
-        }
-        setLoading(false);
-        setLoadingInitial(false);
-      }),
-    []
-  );
+  useEffect(() => {
+    if (response?.type === 'success' && response.authentication) {
+      const { accessToken, idToken } = response.authentication;
+      const credential = GoogleAuthProvider.credential(idToken, accessToken);
 
-  const logout = () => {
-    setLoading(true);
+      signInWithCredential(auth, credential);
+    }
+  }, [response]);
 
-    signOut(auth)
-      .catch((error) => setError(error))
-      .finally(() => setLoading(false));
-  };
+  useEffect(() => {
+    onAuthStateChanged(auth, setGoogleUserInfo);
+  }, [auth]);
+
+  useEffect(() => {
+    if (googleUserInfo) {
+      trpc.user.byId.useQuery(googleUserInfo.uid, {
+        onSuccess(data) {
+          setUser(data);
+        },
+      });
+    }
+  }, [googleUserInfo]);
 
   const signInWithGoogle = async () => {
     setLoading(true);
-    try {
-      const response = await promptAsync({ useProxy: true });
-      if (response.type === 'success') {
-        const accessToken = response.authentication?.accessToken;
-        const idToken = response.authentication?.idToken;
-        const credential = GoogleAuthProvider.credential(idToken, accessToken);
+    promptAsync()
+      .catch(setError)
+      .finally(() => setLoading(false));
+  };
 
-        await signInWithCredential(auth, credential);
-      }
-    } catch (err) {
-      if (err instanceof Error) {
-        setError(err);
-      }
-    }
+  const logout = async () => {
+    setLoading(true);
+    signOut(auth)
+      .catch(setError)
+      .finally(() => setLoading(false));
   };
 
   const memoedValue = useMemo(
-    () => ({ user, loading, error, signInWithGoogle, logout }),
-    [user, loading, error, signInWithGoogle, logout]
+    () => ({ user, setUser, loading, setLoading, googleUserInfo, error, signInWithGoogle, logout }),
+    [user, setUser, loading, setLoading, googleUserInfo, error, signInWithGoogle, logout]
   );
 
-  return (
-    <AuthContext.Provider value={memoedValue}>{!loadingInitial && children}</AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={memoedValue}>{children}</AuthContext.Provider>;
 };
 
 export default function useAuth() {

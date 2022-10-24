@@ -19,16 +19,16 @@ model Post {
 }
 
 model User {
-  id              String        @id
-  email           String        @unique
-  emailVerified   Boolean       @default(false)
-  displayName     String?
-  age             Int?
-  gender          Gender?
-  interestedIn    InterestedIn?
-  bio             String?       @db.Text
-  profileComplete Boolean       @default(false)
-  createdAt       DateTime      @default(now())
+  id              String       @id
+  email           String       @unique
+  emailVerified   Boolean      @default(false)
+  displayName     String
+  age             Int
+  gender          Gender
+  interestedIn    InterestedIn
+  bio             String?      @db.Text
+  profileComplete Boolean      @default(false)
+  createdAt       DateTime     @default(now())
   updatedAt       DateTime?
 }
 
