@@ -3,7 +3,7 @@ import { ExpoConfig } from '@expo/config-types';
 const config: ExpoConfig = {
   name: 'Tinder Clone',
   slug: 'tinder-clone',
-  scheme: 'app',
+  scheme: 'dev.sindrebakken.tinderclone',
   version: '1.0.0',
   orientation: 'portrait',
   icon: './assets/icon.png',
