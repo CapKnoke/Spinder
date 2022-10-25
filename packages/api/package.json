@@ -11,10 +11,12 @@
     "@acme/db": "*",
     "@trpc/client": "10.0.0-proxy-beta.13",
     "@trpc/server": "10.0.0-proxy-beta.13",
+    "spotify-web-api-node": "^5.0.2",
     "superjson": "^1.9.1",
     "zod": "^3.18.0"
   },
   "devDependencies": {
+    "@types/spotify-web-api-node": "^5.0.7",
     "typescript": "^4.8.3"
   }
 }

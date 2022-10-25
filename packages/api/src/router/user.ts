@@ -1,12 +1,16 @@
 import { t } from '../trpc';
 import { z } from 'zod';
+import { getSpotifyUserData } from '../utils/spotify';
 
 export const userRouter = t.router({
   all: t.procedure.query(({ ctx }) => {
     return ctx.prisma.user.findMany();
   }),
-  byId: t.procedure.input(z.string()).query(async ({ ctx, input }) => {
-    return ctx.prisma.user.findUnique({ where: { id: input } });
+  byId: t.procedure.input(z.string().nullish()).mutation(async ({ ctx, input }) => {
+    if (input) {
+      return ctx.prisma.user.findUnique({ where: { id: input } });
+    }
+    return null;
   }),
   updateOrCreate: t.procedure
     .input(
@@ -26,6 +30,23 @@ export const userRouter = t.router({
         where: { id: input.id },
         create: input,
         update: { ...input, updatedAt: new Date() },
+      });
+    }),
+  setSpotifyData: t.procedure
+    .input(
+      z.object({
+        userId: z.string(),
+        spotifyAccessCode: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const spotifyData = (await getSpotifyUserData(input.spotifyAccessCode)) as any;
+      if (spotifyData.error) {
+        throw spotifyData.error;
+      }
+      return ctx.prisma.user.update({
+        where: { id: input.userId },
+        data: { spotifyData },
       });
     }),
 });

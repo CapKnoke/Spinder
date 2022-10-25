@@ -3,6 +3,8 @@ import { View, Text, TouchableOpacity, TextInput, Button } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { FlashList } from '@shopify/flash-list';
 
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import type { RootStackParamList } from '../navigation';
 import type { inferProcedureOutput } from '@trpc/server';
 import type { AppRouter } from '@acme/api';
 
@@ -58,7 +60,9 @@ const CreatePost: React.FC = () => {
   );
 };
 
-const HomeScreen: React.FC = () => {
+const HomeScreen: React.FC<NativeStackScreenProps<RootStackParamList, 'Home'>> = ({
+  navigation,
+}) => {
   const postQuery = trpc.post.all.useQuery();
   const [showPost, setShowPost] = React.useState<string | null>(null);
   const { logout, error } = useAuth();

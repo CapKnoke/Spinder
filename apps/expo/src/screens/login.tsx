@@ -1,22 +1,16 @@
+import * as React from 'react';
 import { View, Text, ImageBackground, StyleSheet, TouchableOpacity } from 'react-native';
-import React, { useEffect } from 'react';
+
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import type { RootStackParamList } from '../navigation';
+
 import useAuth from '../hooks/useAuth';
 
-const LoginScreen: React.FC = () => {
-  const { signInWithGoogle, googleUserInfo } = useAuth();
-  return !googleUserInfo ? (
-    <View style={styles.screen}>
-      <ImageBackground
-        resizeMode="cover"
-        style={styles.background}
-        source={{ uri: 'https://tinder.com/static/tinder.png' }}
-      >
-        <TouchableOpacity style={styles.button} onPress={() => signInWithGoogle()}>
-          <Text style={styles.buttonText}>Sign in & start swiping</Text>
-        </TouchableOpacity>
-      </ImageBackground>
-    </View>
-  ) : (
+const LoginScreen: React.FC<NativeStackScreenProps<RootStackParamList, 'Login'>> = ({
+  navigation,
+}) => {
+  const { signInWithGoogle } = useAuth();
+  return (
     <View style={styles.screen}>
       <ImageBackground
         resizeMode="cover"
