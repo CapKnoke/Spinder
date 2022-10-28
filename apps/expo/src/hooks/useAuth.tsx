@@ -53,7 +53,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode[] | React.ReactN
 
   const [googleUserInfo, setGoogleUserInfo] = React.useState<FireBaseUser | null>(null);
   const [error, setError] = React.useState<Error | null>(null);
-  const [loading, setLoading] = React.useState<boolean>(false);
+  const [loading, setLoading] = React.useState<boolean>(true);
   const [loadingInitial, setLoadingInitial] = React.useState<boolean>(true);
   const [user, setUser] = React.useState<User | null>(null);
   const [profileComplete, setProfileComplete] = React.useState<boolean>(false);
@@ -63,16 +63,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode[] | React.ReactN
       setUser(data);
       if (data?.spotifyData) {
         setProfileComplete(true);
+      } else {
+        setProfileComplete(false);
       }
     },
     onError(err) {
       setError(new Error(err.message));
     },
-    onSettled() {
+    onSettled(data) {
       setLoadingInitial(false);
       setLoading(false);
     },
   });
+
+  React.useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (data) => {
+      setGoogleUserInfo(data);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  React.useEffect(() => {
+    getUserFromDb.mutate(googleUserInfo?.uid);
+  }, [googleUserInfo]);
 
   React.useEffect(() => {
     if (response?.type === 'success' && response.authentication) {
@@ -86,14 +100,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode[] | React.ReactN
     }
   }, [response]);
 
-  React.useEffect(() => {
-    onAuthStateChanged(auth, setGoogleUserInfo);
-  }, [auth]);
-
-  React.useEffect(() => {
-    getUserFromDb.mutate(googleUserInfo?.uid);
-  }, [googleUserInfo]);
-
   const signInWithGoogle = async () => {
     setLoading(true);
     promptAsync().catch((err) => {
@@ -103,11 +109,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode[] | React.ReactN
   };
 
   const logout = async () => {
-    setLoading(true);
-    signOut(auth).catch((err) => {
-      setError(err);
-      setLoading(false);
-    });
+    signOut(auth).catch(setError);
   };
 
   const memoedValue = React.useMemo(
