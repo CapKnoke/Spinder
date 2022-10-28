@@ -14,12 +14,12 @@ const redirectUri = AuthSession.makeRedirectUri({ useProxy });
 const SpotifyConnect: React.FC<{
   credentials: inferProcedureOutput<AppRouter['credentials']['getSpotifyCredentials']>;
 }> = ({ credentials: { clientId } }) => {
-  const { setLoading, setError, setUser, setProfileComplete } = useAuth();
+  const { setLoading, setError, setUser, setProfileComplete, user } = useAuth();
   const discovery = {
     authorizationEndpoint: 'https://accounts.spotify.com/authorize',
     tokenEndpoint: 'https://accounts.spotify.com/api/token',
   };
-  const [_request, response, promptAsync] = AuthSession.useAuthRequest(
+  const [_request, _response, promptAsync] = AuthSession.useAuthRequest(
     {
       clientId: clientId,
       responseType: AuthSession.ResponseType.Token,
@@ -31,9 +31,9 @@ const SpotifyConnect: React.FC<{
 
   const setSpotifyData = trpc.user.setSpotifyData.useMutation({
     onSuccess(data) {
-      setUser(data);
       if (data.spotifyData) {
         setProfileComplete(true);
+        setUser(data);
       }
     },
     onError(err) {
@@ -44,17 +44,17 @@ const SpotifyConnect: React.FC<{
     },
   });
 
-  React.useEffect(() => {
-    console.log(response);
-    if (response?.type === 'success' && response.authentication) {
-      setSpotifyData.mutate({ userId: '', spotifyAccessCode: response.authentication.accessToken });
-    }
-  }, [response]);
   const grantSpotifyAccess = async () => {
     setLoading(true);
-    promptAsync({ useProxy }).catch(() => {
+    const response = await promptAsync({ useProxy }).catch(() => {
       setLoading(false);
     });
+    if (user && response?.type === 'success' && response.authentication) {
+      setSpotifyData.mutate({
+        userId: user.id,
+        spotifyAccessCode: response.authentication.accessToken,
+      });
+    }
   };
   return <Button title="Connect to Spotify" onPress={grantSpotifyAccess} />;
 };

@@ -1,27 +1,40 @@
 import * as React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../lib/firebase';
 
 import HomeScreen from '../screens/home';
-import LoginScreen from '../screens/login';
 import useAuth from '../hooks/useAuth';
 import LoadingScreen from '../screens/loading';
-import RegisterScreen from '../screens/register';
-import SpotifyConnectScreen from '../screens/spotifyConnect';
+import ErrorScreen from '../screens/error';
+import LoginStack from './loginStack';
 
 export type RootStackParamList = {
-  Loading: undefined;
   Home: undefined;
-  Register: undefined;
-  SpotifyConnect: undefined;
-  Login: undefined;
+  LoginStack: undefined;
 };
 
 const StackNavigation: React.FC = () => {
   const Stack = createNativeStackNavigator<RootStackParamList>();
-  const { user, profileComplete, loading, googleUserInfo } = useAuth();
+  const { profileComplete, loading, setLoading, error, googleUserInfo, user } = useAuth();
+  React.useEffect(() => {
+    if (!loading) {
+      setLoading(true);
+    }
+    const unsubscribe = onAuthStateChanged(auth, (data) => {
+      if (!data) {
+        setLoading(false);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
+
+  if (error) {
+    return <ErrorScreen />;
+  }
 
   if (loading) {
-    return <Stack.Screen name="Loading" component={LoadingScreen} />;
+    return <LoadingScreen />;
   }
 
   return (
@@ -30,16 +43,8 @@ const StackNavigation: React.FC = () => {
         <Stack.Group>
           <Stack.Screen name="Home" component={HomeScreen} />
         </Stack.Group>
-      ) : googleUserInfo ? (
-        <Stack.Group>
-          {user ? (
-            <Stack.Screen name="SpotifyConnect" component={SpotifyConnectScreen} />
-          ) : (
-            <Stack.Screen name="Register" component={RegisterScreen} />
-          )}
-        </Stack.Group>
       ) : (
-        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="LoginStack" component={LoginStack} />
       )}
     </Stack.Navigator>
   );

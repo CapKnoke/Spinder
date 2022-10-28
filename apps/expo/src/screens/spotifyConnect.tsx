@@ -3,14 +3,14 @@ import { View, Text, Button } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import type { RootStackParamList } from '../navigation';
+import type { LoginStackParamList } from '../navigation/loginStack';
 
 import useAuth from '../hooks/useAuth';
 import SpotifyConnect from '../components/SpotifyConnect';
 import { trpc } from '../utils/trpc';
 
 const SpotifyConnectScreen: React.FC<
-  NativeStackScreenProps<RootStackParamList, 'SpotifyConnect'>
+  NativeStackScreenProps<LoginStackParamList, 'SpotifyConnect'>
 > = ({ navigation }) => {
   const { logout } = useAuth();
   const spotifyCredentials = trpc.credentials.getSpotifyCredentials.useQuery();

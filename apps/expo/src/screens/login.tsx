@@ -2,11 +2,11 @@ import * as React from 'react';
 import { View, Text, ImageBackground, StyleSheet, TouchableOpacity } from 'react-native';
 
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import type { RootStackParamList } from '../navigation';
+import type { LoginStackParamList } from '../navigation/loginStack';
 
 import useAuth from '../hooks/useAuth';
 
-const LoginScreen: React.FC<NativeStackScreenProps<RootStackParamList, 'Login'>> = ({
+const LoginScreen: React.FC<NativeStackScreenProps<LoginStackParamList, 'Login'>> = ({
   navigation,
 }) => {
   const { signInWithGoogle } = useAuth();
