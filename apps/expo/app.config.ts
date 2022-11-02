@@ -7,11 +7,12 @@ const config: ExpoConfig = {
   version: '1.0.0',
   orientation: 'portrait',
   icon: './assets/icon.png',
+  backgroundColor: '#232121',
   userInterfaceStyle: 'dark',
   splash: {
     image: './assets/splash.png',
     resizeMode: 'contain',
-    backgroundColor: '#ffffff',
+    backgroundColor: '#232121',
   },
   updates: {
     fallbackToCacheTimeout: 0,
@@ -23,7 +24,7 @@ const config: ExpoConfig = {
   android: {
     adaptiveIcon: {
       foregroundImage: './assets/adaptive-icon.png',
-      backgroundColor: '#FFFFFF',
+      backgroundColor: '#232121',
     },
     package: 'dev.sindrebakken.tinderclone',
   },

@@ -1,4 +1,4 @@
-import { Text, View, TextInput, Button } from 'react-native';
+import { Text, View, TextInput, Button, TouchableOpacity } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { Picker } from '@react-native-picker/picker';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -6,6 +6,7 @@ import { z } from 'zod';
 
 import useAuth from '../hooks/useAuth';
 import { trpc } from '../utils/trpc';
+import { useTheme } from '@react-navigation/native';
 
 interface IUpdateUserInfoProps {
   displayName?: string;
@@ -33,6 +34,7 @@ const UpdateUserInfo: React.FC<IUpdateUserInfoProps> = ({
   bio,
 }) => {
   const { googleUserInfo, setLoading, setUser } = useAuth();
+  const { colors } = useTheme();
   const {
     control,
     handleSubmit,
@@ -47,7 +49,7 @@ const UpdateUserInfo: React.FC<IUpdateUserInfoProps> = ({
       bio,
     },
   });
-  const updateUserInfo = trpc.user.updateOrCreate.useMutation({
+  const { mutate } = trpc.user.updateOrCreate.useMutation({
     onMutate() {
       setLoading(true);
     },
@@ -60,7 +62,7 @@ const UpdateUserInfo: React.FC<IUpdateUserInfoProps> = ({
   });
   const onSubmit = (data: IFormInputs) => {
     if (googleUserInfo) {
-      updateUserInfo.mutate({
+      mutate({
         ...data,
         email: googleUserInfo?.email || 'example@mail.com',
         emailVerified: googleUserInfo?.emailVerified || false,
@@ -79,9 +81,12 @@ const UpdateUserInfo: React.FC<IUpdateUserInfoProps> = ({
           }}
           render={({ field: { onChange, onBlur, value } }) => (
             <>
-              <Text className="text-lg pl-2">Name</Text>
+              <Text style={{ color: colors.text }} className="text-lg pl-2 mt-4">
+                Name
+              </Text>
               <TextInput
-                className="border-neutral-400 shadow-md text-lg w-full border rounded-md px-4 py-2 bg-white"
+                style={{ backgroundColor: colors.card, color: colors.text }}
+                className="text-lg rounded-sm py-3 px-2"
                 onBlur={onBlur}
                 onChangeText={onChange}
                 value={value}
@@ -90,15 +95,18 @@ const UpdateUserInfo: React.FC<IUpdateUserInfoProps> = ({
           )}
           name="displayName"
         />
-        {errors.displayName && <Text>This is required.</Text>}
+        {errors.displayName && <Text style={{ color: colors.text }}>Name is required.</Text>}
 
         <Controller
           control={control}
           render={({ field: { onChange, onBlur, value } }) => (
             <>
-              <Text className="text-lg pl-2">Age</Text>
+              <Text style={{ color: colors.text }} className="text-lg pl-2 mt-4">
+                Age
+              </Text>
               <TextInput
-                className="border-neutral-400 text-lg w-full border rounded-md px-4 py-2 bg-white"
+                style={{ backgroundColor: colors.card, color: colors.text }}
+                className="text-lg rounded-sm py-3 px-2"
                 keyboardType="numeric"
                 onBlur={onBlur}
                 onChangeText={(value) => onChange(Number(value))}
@@ -108,20 +116,23 @@ const UpdateUserInfo: React.FC<IUpdateUserInfoProps> = ({
           )}
           name="age"
         />
-        {errors.age && <Text>This is required.</Text>}
+        {errors.age && <Text style={{ color: colors.text }}>Age is required.</Text>}
 
         <Controller
           control={control}
           render={({ field: { onChange, onBlur, value } }) => (
             <>
-              <Text className="text-lg pl-2">Gender</Text>
+              <Text style={{ color: colors.text }} className="text-lg pl-2 mt-4">
+                Gender
+              </Text>
               <Picker
-                className="border-neutral-400 text-lg w-full border rounded-md px-4 py-2 bg-white"
+                style={{ backgroundColor: colors.card, color: colors.text }}
+                dropdownIconColor={colors.text}
                 onValueChange={onChange}
                 onBlur={onBlur}
                 selectedValue={value}
               >
-                <Picker.Item label="Select" value={undefined} />
+                <Picker.Item color="#7a7d7b" enabled={false} label="Select" value={undefined} />
                 <Picker.Item label="Male" value="MALE" />
                 <Picker.Item label="Female" value="FEMALE" />
               </Picker>
@@ -129,20 +140,23 @@ const UpdateUserInfo: React.FC<IUpdateUserInfoProps> = ({
           )}
           name="gender"
         />
-        {errors.gender && <Text>You must select an option</Text>}
+        {errors.gender && <Text style={{ color: colors.text }}>You must select an option</Text>}
 
         <Controller
           control={control}
           render={({ field: { onChange, onBlur, value } }) => (
             <>
-              <Text className="text-lg pl-2">Interested In</Text>
+              <Text style={{ color: colors.text }} className="text-lg pl-2 mt-4">
+                Interested In
+              </Text>
               <Picker
-                className="border-neutral-400 shadow-md text-lg w-full border rounded-md px-4 py-2 bg-white"
+                style={{ backgroundColor: colors.card, color: colors.text }}
+                dropdownIconColor={colors.text}
                 onValueChange={onChange}
                 onBlur={onBlur}
                 selectedValue={value}
               >
-                <Picker.Item label="Select" value={undefined} />
+                <Picker.Item color="#7a7d7b" enabled={false} label="Select" value={undefined} />
                 <Picker.Item label="Male" value="MALE" />
                 <Picker.Item label="Female" value="FEMALE" />
                 <Picker.Item label="Both" value="BOTH" />
@@ -151,7 +165,9 @@ const UpdateUserInfo: React.FC<IUpdateUserInfoProps> = ({
           )}
           name="interestedIn"
         />
-        {errors.interestedIn && <Text>You must select an option</Text>}
+        {errors.interestedIn && (
+          <Text style={{ color: colors.text }}>You must select an option</Text>
+        )}
 
         <Controller
           control={control}
@@ -160,20 +176,33 @@ const UpdateUserInfo: React.FC<IUpdateUserInfoProps> = ({
           }}
           render={({ field: { onChange, onBlur, value } }) => (
             <>
-              <Text className="text-lg pl-2">Bio</Text>
+              <Text style={{ color: colors.text }} className="text-lg pl-2 mt-4">
+                Bio
+              </Text>
               <TextInput
-                className="border-neutral-400 shadow-md text-lg w-full border rounded-md px-4 py-2 bg-white"
+                style={{ backgroundColor: colors.card, color: colors.text }}
+                className="text-lg rounded-sm py-3 px-2"
                 onBlur={onBlur}
                 onChangeText={onChange}
                 value={value || undefined}
                 multiline
+                numberOfLines={3}
+                textAlignVertical="top"
               />
             </>
           )}
           name="bio"
         />
       </View>
-      <Button title="Submit" onPress={handleSubmit(onSubmit)} />
+      <TouchableOpacity
+        style={{ backgroundColor: colors.primary }}
+        className="rounded-md px-8 py-3"
+        onPress={handleSubmit(onSubmit)}
+      >
+        <Text style={{ color: colors.text }} className="text-center font-bold text-lg">
+          Submit
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 };

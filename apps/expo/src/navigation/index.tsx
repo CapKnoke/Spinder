@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { StatusBar } from 'expo-status-bar';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../lib/firebase';
@@ -16,7 +17,7 @@ export type RootStackParamList = {
 
 const StackNavigation: React.FC = () => {
   const Stack = createNativeStackNavigator<RootStackParamList>();
-  const { profileComplete, loading, setLoading, error, googleUserInfo, user } = useAuth();
+  const { profileComplete, loading, setLoading, error } = useAuth();
   React.useEffect(() => {
     if (!loading) {
       setLoading(true);

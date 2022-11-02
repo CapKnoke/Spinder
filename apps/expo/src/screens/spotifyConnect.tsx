@@ -8,20 +8,27 @@ import type { LoginStackParamList } from '../navigation/loginStack';
 import useAuth from '../hooks/useAuth';
 import SpotifyConnect from '../components/SpotifyConnect';
 import { trpc } from '../utils/trpc';
+import { useTheme } from '@react-navigation/native';
 
 const SpotifyConnectScreen: React.FC<
   NativeStackScreenProps<LoginStackParamList, 'SpotifyConnect'>
 > = ({ navigation }) => {
   const { logout } = useAuth();
+  const { colors } = useTheme();
   const spotifyCredentials = trpc.credentials.getSpotifyCredentials.useQuery();
   return (
     <SafeAreaView>
-      <View className="flex flex-col items-center justify-center h-full">
+      <View className="flex h-full p-4">
         <View className="py-2">
           <Button title="Log out" onPress={() => logout()} />
         </View>
-        <View className="py-8">
-          <Text>Connect Spotify Account:</Text>
+        <View className="flex-auto items-center justify-center px-4">
+          <Text style={{ color: colors.text }} className="text-center text-2xl pb-4 font-semibold">
+            Almost there!
+          </Text>
+          <Text style={{ color: colors.text }} className="text-center text-lg pb-4">
+            The final step is to connect your Spotify account
+          </Text>
           {spotifyCredentials.isSuccess ? (
             <SpotifyConnect credentials={spotifyCredentials.data} />
           ) : null}
