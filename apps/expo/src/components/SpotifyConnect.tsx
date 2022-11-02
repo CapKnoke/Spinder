@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Platform, Button } from 'react-native';
+import { Platform, TouchableOpacity, Text } from 'react-native';
 import * as AuthSession from 'expo-auth-session';
 
 import type { inferProcedureOutput } from '@trpc/server';
@@ -7,6 +7,7 @@ import type { AppRouter } from '@acme/api';
 
 import { trpc } from '../utils/trpc';
 import useAuth from '../hooks/useAuth';
+import { useTheme } from '@react-navigation/native';
 
 const useProxy = Platform.select({ web: false, default: true });
 const redirectUri = AuthSession.makeRedirectUri({ useProxy });
@@ -15,6 +16,7 @@ const SpotifyConnect: React.FC<{
   credentials: inferProcedureOutput<AppRouter['credentials']['getSpotifyCredentials']>;
 }> = ({ credentials: { clientId } }) => {
   const { setLoading, setError, setUser, setProfileComplete, user } = useAuth();
+  const { colors } = useTheme();
   const discovery = {
     authorizationEndpoint: 'https://accounts.spotify.com/authorize',
     tokenEndpoint: 'https://accounts.spotify.com/api/token',
@@ -56,7 +58,17 @@ const SpotifyConnect: React.FC<{
       });
     }
   };
-  return <Button title="Connect to Spotify" onPress={grantSpotifyAccess} />;
+  return (
+    <TouchableOpacity
+      style={{ backgroundColor: colors.primary }}
+      className="rounded-md px-8 py-3"
+      onPress={grantSpotifyAccess}
+    >
+      <Text style={{ color: colors.text }} className="font-bold text-lg">
+        Connect to Spotify
+      </Text>
+    </TouchableOpacity>
+  );
 };
 
 export default SpotifyConnect;
