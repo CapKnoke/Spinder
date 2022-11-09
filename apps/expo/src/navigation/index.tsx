@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { StatusBar } from 'expo-status-bar';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../lib/firebase';
