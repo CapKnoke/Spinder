@@ -1,7 +1,7 @@
 import { ExpoConfig } from '@expo/config-types';
 
 const config: ExpoConfig = {
-  name: 'Tinder Clone',
+  name: 'Spinder',
   slug: 'tinder-clone',
   scheme: 'dev.sindrebakken.tinderclone',
   version: '1.0.0',

@@ -70,7 +70,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode[] | React.ReactN
     onError(err) {
       setError(new Error(err.message));
     },
-    onSettled(data) {
+    onSettled() {
       setLoadingInitial(false);
       setLoading(false);
     },

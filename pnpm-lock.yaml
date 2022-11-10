@@ -54,6 +54,7 @@ importers:
       react-dom: 18.0.0
       react-hook-form: ^7.38.0
       react-native: 0.69.6
+      react-native-deck-swiper: ^2.0.11
       react-native-keyboard-aware-scroll-view: ^0.9.5
       react-native-pager-view: 5.4.24
       react-native-paper: ^4.12.5
@@ -98,6 +99,7 @@ importers:
       react-dom: 18.0.0_react@18.0.0
       react-hook-form: 7.38.0_react@18.0.0
       react-native: 0.69.6_4vecaq6aw772iuce4434fakkr4
+      react-native-deck-swiper: 2.0.11_gtltrjvtlgj7ga36qzsxajwqwe
       react-native-keyboard-aware-scroll-view: 0.9.5_react-native@0.69.6
       react-native-pager-view: 5.4.24_gtltrjvtlgj7ga36qzsxajwqwe
       react-native-paper: 4.12.5_v2dazo3znc6ojnhxsz3acgyu5q
@@ -8467,6 +8469,13 @@ packages:
       sisteransi: 1.0.5
     dev: false
 
+  /prop-types/15.5.10:
+    resolution: {integrity: sha512-vCFzoUFaZkVNeFkhK1KbSq4cn97GDrpfBt9K2qLkGnPAEFhEv3M61Lk5t+B7c0QfMLWo0fPkowk/4SuXerh26Q==}
+    dependencies:
+      fbjs: 0.8.18
+      loose-envify: 1.4.0
+    dev: false
+
   /prop-types/15.5.8:
     resolution: {integrity: sha512-QiDx7s0lWoAVxmEmOYnn3rIZGduup2PZgj3rta5O5y0NfPKu3ApWi+GdMfTto7PmO/5+p4yamSLMZkj0jaTL4A==}
     dependencies:
@@ -8681,6 +8690,17 @@ packages:
     transitivePeerDependencies:
       - '@babel/preset-env'
       - supports-color
+    dev: false
+
+  /react-native-deck-swiper/2.0.11_gtltrjvtlgj7ga36qzsxajwqwe:
+    resolution: {integrity: sha512-qXxycuQO+Qn8Z301EGWdHsjYMRgXASAdjSAKTwExNds9T5BeYin1ApOHiWMhHRJr2nayzpWarsgYnQ33pwYYYg==}
+    peerDependencies:
+      react: ^16.0.0-beta.5 || ^17.0.0 || ^18.0.0
+      react-native: ^0.49.1
+    dependencies:
+      prop-types: 15.5.10
+      react: 18.0.0
+      react-native: 0.69.6_4vecaq6aw772iuce4434fakkr4
     dev: false
 
   /react-native-gradle-plugin/0.0.7:
