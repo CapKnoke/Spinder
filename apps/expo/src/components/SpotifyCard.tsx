@@ -21,18 +21,18 @@ const TrackItem: React.FC<{ track: SpotifyTrack }> = ({ track }) => {
   return (
     <View className="p-2 flex flex-row">
       <View>
-        <Image className="h-24 w-24" source={{ uri: albumImage.url }} />
+        <Image className="h-20 w-20" source={{ uri: albumImage.url }} />
       </View>
       <View className="flex-1 justify-between px-2">
         <View>
-          <Text className="text-lg" style={{ color: colors.text }}>
+          <Text className="text-md" style={{ color: colors.text }}>
             {track.name}
           </Text>
           <Text className="font-thin text-xs" style={{ color: colors.text }}>
             {track.album.name}
           </Text>
         </View>
-        <Text style={{ color: colors.text }}>
+        <Text style={{ color: colors.text }} className="text-xs">
           {track.artists.map((artist) => artist.name).join(', ')}
         </Text>
       </View>
@@ -46,7 +46,7 @@ const ArtistItem: React.FC<{ artist: SpotifyArtist }> = ({ artist }) => {
   return (
     <View className="p-2 flex flex-row">
       <View>
-        <Image className="h-24 w-24" source={{ uri: artistImage.url }} />
+        <Image className="h-20 w-20" source={{ uri: artistImage.url }} />
       </View>
       <View className="flex-1 justify-between px-2">
         <View>
@@ -68,9 +68,9 @@ const RecentlyPlayedItem: React.FC<{ recentlyPlayed: SpotifyRecentlyPlayedTrack 
   const albumImage = track.album.images[1];
   const { colors } = useTheme();
   return (
-    <View className="p-2 flex flex-row">
+    <View className="pb-2 flex-row">
       <View>
-        <Image className="h-24 w-24" source={{ uri: albumImage.url }} />
+        <Image className="h-20 w-20" source={{ uri: albumImage.url }} />
       </View>
       <View className="flex-1 justify-between px-2">
         <View>
@@ -140,10 +140,10 @@ type SceneProps = {
   route: Route;
 };
 
-const SpotifyCard: React.FC<{ spotifyUserData: SpotifyUserData; user: User }> = ({
-  spotifyUserData: { topTracks, topArtists, recentlyPlayed },
-  user,
+const SpotifyCard: React.FC<{ user: User }> = ({
+  user: { displayName, age, gender, spotifyData },
 }) => {
+  const { topArtists, topTracks, recentlyPlayed } = spotifyData as SpotifyUserData;
   const { colors } = useTheme();
   const layout = useWindowDimensions();
 
@@ -182,17 +182,6 @@ const SpotifyCard: React.FC<{ spotifyUserData: SpotifyUserData; user: User }> = 
 
   return (
     <View className="flex-1 rounded-md overflow-hidden">
-      {user ? (
-        <View style={{ backgroundColor: '#1c1c1c' }} className="flex-row justify-between p-4">
-          <Text style={{ color: colors.text }} className="text-xl">
-            {user.displayName}
-          </Text>
-          <Text
-            style={{ color: colors.text }}
-            className="text-xl capitalize"
-          >{`${user.age}, ${user.gender}`}</Text>
-        </View>
-      ) : null}
       <TabView
         navigationState={{ index, routes }}
         renderTabBar={renderTabBar}
@@ -200,8 +189,17 @@ const SpotifyCard: React.FC<{ spotifyUserData: SpotifyUserData; user: User }> = 
         onIndexChange={setIndex}
         initialLayout={{ width: layout.width }}
         swipeEnabled={false}
-        tabBarPosition={'bottom'}
+        tabBarPosition={'top'}
       />
+      <View style={{ backgroundColor: '#1c1c1c' }} className="flex-row justify-between p-4">
+        <Text style={{ color: colors.text }} className="text-xl">
+          {displayName}
+        </Text>
+        <Text
+          style={{ color: colors.text }}
+          className="text-xl capitalize"
+        >{`${age}, ${gender}`}</Text>
+      </View>
     </View>
   );
 };
