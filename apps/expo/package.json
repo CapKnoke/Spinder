@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@acme/api": "*",
+    "@acme/react-native-deck-swiper": "workspace:*",
     "@hookform/resolvers": "^2.9.10",
     "@react-native-async-storage/async-storage": "^1.17.10",
     "@react-native-community/cli": "^8.0.0",
@@ -43,7 +44,6 @@
     "react-dom": "18.0.0",
     "react-hook-form": "^7.38.0",
     "react-native": "0.69.6",
-    "react-native-deck-swiper": "^2.0.11",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-pager-view": "5.4.24",
     "react-native-paper": "^4.12.5",
