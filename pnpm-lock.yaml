@@ -15,7 +15,7 @@ importers:
   apps/expo:
     specifiers:
       '@acme/api': '*'
-      '@acme/react-native-deck-swiper': workspace:*
+      '@acme/react-native-deck-swiper': '*'
       '@babel/core': ^7.19.6
       '@babel/preset-env': ^7.19.4
       '@babel/runtime': ^7.19.4
