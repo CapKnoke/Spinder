@@ -1,6 +1,7 @@
 import { t } from '../trpc';
 import { z } from 'zod';
 import { getSpotifyUserData } from '../utils/spotify';
+import { TRPCError } from '@trpc/server';
 
 export const userRouter = t.router({
   all: t.procedure.query(({ ctx }) => {
@@ -10,7 +11,7 @@ export const userRouter = t.router({
     if (input) {
       return ctx.prisma.user.findUnique({ where: { id: input } });
     }
-    return null;
+    throw new TRPCError({ message: 'please provide input', code: 'BAD_REQUEST' });
   }),
   updateOrCreate: t.procedure
     .input(
