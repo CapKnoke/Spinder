@@ -11,7 +11,7 @@ export const userRouter = t.router({
     if (input) {
       return ctx.prisma.user.findUnique({ where: { id: input } });
     }
-    throw new TRPCError({ message: 'please provide input', code: 'BAD_REQUEST' });
+    return null;
   }),
   updateOrCreate: t.procedure
     .input(
