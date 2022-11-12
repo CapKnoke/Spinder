@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { View, Image, Text, ActivityIndicator } from 'react-native';
-import Swiper from 'react-native-deck-swiper';
+import Swiper from '@acme/react-native-deck-swiper';
 import { useTheme } from '@react-navigation/native';
 import { User } from '../types/trpc';
 import SpotifyCard from './SpotifyCard';
