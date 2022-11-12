@@ -1,6 +1,7 @@
 import { t } from '../trpc';
 import { z } from 'zod';
 import { getSpotifyUserData } from '../utils/spotify';
+import { TRPCError } from '@trpc/server';
 
 export const userRouter = t.router({
   all: t.procedure.query(({ ctx }) => {

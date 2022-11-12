@@ -35,6 +35,7 @@ const MatchQuee: React.FC<{ quee: User[] | null; swipeRef: React.RefObject<Swipe
             width: 'auto',
             height: 'auto',
           }}
+          pointerEvents="box-none"
           cards={quee}
           stackSize={2}
           verticalSwipe={false}
