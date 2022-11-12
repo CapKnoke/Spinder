@@ -15,7 +15,7 @@ importers:
   apps/expo:
     specifiers:
       '@acme/api': '*'
-      '@acme/react-native-deck-swiper': workspace:*
+      '@acme/react-native-deck-swiper': '*'
       '@babel/core': ^7.19.6
       '@babel/preset-env': ^7.19.4
       '@babel/runtime': ^7.19.4
@@ -226,7 +226,6 @@ importers:
       prettier-eslint: ^6.4.2
       prettier-eslint-cli: ^4.1.1
       prop-types: 15.5.10
-      react-test-renderer: 18.0.0
     dependencies:
       prop-types: 15.5.10
     devDependencies:
@@ -247,7 +246,6 @@ importers:
       lodash: 4.17.21
       prettier-eslint: 6.4.3
       prettier-eslint-cli: 4.7.1
-      react-test-renderer: 18.0.0
 
 packages:
 
@@ -11240,6 +11238,7 @@ packages:
 
   /react-is/18.2.0:
     resolution: {integrity: sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==}
+    dev: false
 
   /react-native-codegen/0.69.2_@babel+preset-env@7.19.4:
     resolution: {integrity: sha512-yPcgMHD4mqLbckqnWjFBaxomDnBREfRjDi2G/WxNyPBQLD+PXUEmZTkDx6QoOXN+Bl2SkpnNOSsLE2+/RUHoPw==}
@@ -11423,15 +11422,6 @@ packages:
     resolution: {integrity: sha512-Hwln1VNuGl/6bVwnd0Xdn1e84gT/8T9aYNL+HAKDArLCS7LWjwr7StE30IEYbIkx0Vi3vs+coQxe+SQDbGbbpA==}
     engines: {node: '>=0.10.0'}
 
-  /react-shallow-renderer/16.15.0:
-    resolution: {integrity: sha512-oScf2FqQ9LFVQgA73vr86xl2NaOIX73rh+YFqcOp68CWj56tSfgtGKrEbyhCj0rSijyG9M1CYprTh39fBi5hzA==}
-    peerDependencies:
-      react: ^16.0.0 || ^17.0.0 || ^18.0.0
-    dependencies:
-      object-assign: 4.1.1
-      react-is: 18.2.0
-    dev: true
-
   /react-shallow-renderer/16.15.0_react@18.0.0:
     resolution: {integrity: sha512-oScf2FqQ9LFVQgA73vr86xl2NaOIX73rh+YFqcOp68CWj56tSfgtGKrEbyhCj0rSijyG9M1CYprTh39fBi5hzA==}
     peerDependencies:
@@ -11449,16 +11439,6 @@ packages:
     dependencies:
       react: 18.1.0
     dev: false
-
-  /react-test-renderer/18.0.0:
-    resolution: {integrity: sha512-SyZTP/FSkwfiKOZuTZiISzsrC8A80KNlQ8PyyoGoOq+VzMAab6Em1POK/CiX3+XyXG6oiJa1C53zYDbdrJu9fw==}
-    peerDependencies:
-      react: ^18.0.0
-    dependencies:
-      react-is: 18.2.0
-      react-shallow-renderer: 16.15.0
-      scheduler: 0.21.0
-    dev: true
 
   /react-transform-hmr/1.0.4:
     resolution: {integrity: sha512-8bK1DWUZynE6swD2jNPbzO5mvhB8fs9Ub5GksoVqYkc9i06FdSLC36qQYjaKOW79KBdsROq2cK0tRKITiEzmyg==}
@@ -11991,6 +11971,7 @@ packages:
     resolution: {integrity: sha512-1r87x5fz9MXqswA2ERLo0EbOAU74DpIUO090gIasYTqlVoJeMcl+Z1Rg7WHz+qtPujhS/hGIt9kxZOYBV3faRQ==}
     dependencies:
       loose-envify: 1.4.0
+    dev: false
 
   /scheduler/0.22.0:
     resolution: {integrity: sha512-6QAm1BgQI88NPYymgGQLCZgvep4FyePDWFpXVK+zNSUgHwlqpJy8VEh8Et0KxTACS4VWwMousBElAZOH9nkkoQ==}

@@ -8,7 +8,7 @@ export const userRouter = t.router({
   }),
   byId: t.procedure.input(z.string().nullish()).mutation(async ({ ctx, input }) => {
     if (input) {
-      return ctx.prisma.user.findUniqueOrThrow({ where: { id: input } });
+      return ctx.prisma.user.findUnique({ where: { id: input } });
     }
     return null;
   }),

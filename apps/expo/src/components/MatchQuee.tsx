@@ -27,9 +27,6 @@ const MatchQuee: React.FC<{ quee: User[] | null; swipeRef: React.RefObject<Swipe
       {quee ? (
         <Swiper
           ref={swipeRef}
-          cardHorizontalMargin={0}
-          cardVerticalMargin={0}
-          containerStyle={{ backgroundColor: 'transparent' }}
           cardStyle={{
             top: 0,
             left: 0,

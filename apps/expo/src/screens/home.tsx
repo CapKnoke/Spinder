@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { View, Text, Button, ActivityIndicator, Image, TouchableOpacity } from 'react-native';
+import { View, Text, Button, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AntDesign } from '@expo/vector-icons';
-import Swiper from 'react-native-deck-swiper';
+import Swiper from '@acme/react-native-deck-swiper';
 
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../navigation';
@@ -29,19 +29,6 @@ const HomeScreen: React.FC<NativeStackScreenProps<RootStackParamList, 'Home'>> =
       }
     },
   });
-
-  if (!user || !user.spotifyData) {
-    return (
-      <SafeAreaView className="h-full p-4">
-        <View className="py-2">
-          <Button title="Log out" onPress={() => logout()} />
-        </View>
-        <Text style={{ color: colors.text }}>
-          Oops! Something went wrong. Please reload or log in again
-        </Text>
-      </SafeAreaView>
-    );
-  }
 
   return (
     <SafeAreaView className="flex-1 p-4">
