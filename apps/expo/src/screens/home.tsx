@@ -9,7 +9,6 @@ import type { RootStackParamList } from '../navigation';
 
 import { trpc } from '../utils/trpc';
 import useAuth from '../hooks/useAuth';
-import { useTheme } from '@react-navigation/native';
 import { User } from '../types/trpc';
 import MatchQuee from '../components/MatchQuee';
 
@@ -18,8 +17,7 @@ const HomeScreen: React.FC<NativeStackScreenProps<RootStackParamList, 'Home'>> =
 }) => {
   const [quee, setQuee] = React.useState<User[] | null>(null);
   const swipeRef = React.useRef<Swiper<User>>(null);
-  const { logout, user } = useAuth();
-  const { colors } = useTheme();
+  const { logout } = useAuth();
 
   trpc.user.all.useQuery(undefined, {
     onSuccess(data) {
@@ -29,19 +27,6 @@ const HomeScreen: React.FC<NativeStackScreenProps<RootStackParamList, 'Home'>> =
       }
     },
   });
-
-  if (!user || !user.spotifyData) {
-    return (
-      <SafeAreaView className="h-full p-4">
-        <View className="py-2">
-          <Button title="Log out" onPress={() => logout()} />
-        </View>
-        <Text style={{ color: colors.text }}>
-          Oops! Something went wrong. Please reload or log in again
-        </Text>
-      </SafeAreaView>
-    );
-  }
 
   return (
     <SafeAreaView className="flex-1 p-4">

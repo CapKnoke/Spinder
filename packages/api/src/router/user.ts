@@ -1,6 +1,7 @@
 import { t } from '../trpc';
 import { z } from 'zod';
 import { getSpotifyUserData } from '../utils/spotify';
+import { TRPCError } from '@trpc/server';
 
 export const userRouter = t.router({
   all: t.procedure.query(({ ctx }) => {
@@ -8,7 +9,7 @@ export const userRouter = t.router({
   }),
   byId: t.procedure.input(z.string().nullish()).mutation(async ({ ctx, input }) => {
     if (input) {
-      return ctx.prisma.user.findUniqueOrThrow({ where: { id: input } });
+      return ctx.prisma.user.findUnique({ where: { id: input } });
     }
     return null;
   }),

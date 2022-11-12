@@ -1,0 +1,3 @@
+[submodule "packages/react-native-deck-swiper"]
+	path = packages/react-native-deck-swiper
+	url = https://github.com/CapKnoke/react-native-deck-swiper.git

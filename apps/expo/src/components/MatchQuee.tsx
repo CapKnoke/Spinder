@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { View, Image, Text, ActivityIndicator } from 'react-native';
 import Swiper from 'react-native-deck-swiper';
-import { AntDesign } from '@expo/vector-icons';
 import { useTheme } from '@react-navigation/native';
 import { User } from '../types/trpc';
 import SpotifyCard from './SpotifyCard';
@@ -28,9 +27,6 @@ const MatchQuee: React.FC<{ quee: User[] | null; swipeRef: React.RefObject<Swipe
       {quee ? (
         <Swiper
           ref={swipeRef}
-          cardHorizontalMargin={0}
-          cardVerticalMargin={0}
-          containerStyle={{ backgroundColor: 'transparent' }}
           cardStyle={{
             top: 0,
             left: 0,
@@ -39,6 +35,7 @@ const MatchQuee: React.FC<{ quee: User[] | null; swipeRef: React.RefObject<Swipe
             width: 'auto',
             height: 'auto',
           }}
+          pointerEvents="box-none"
           cards={quee}
           stackSize={2}
           verticalSwipe={false}

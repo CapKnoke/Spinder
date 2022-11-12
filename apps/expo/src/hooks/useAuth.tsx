@@ -58,7 +58,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode[] | React.ReactN
   const [user, setUser] = React.useState<User | null>(null);
   const [profileComplete, setProfileComplete] = React.useState<boolean>(false);
 
-  const getUserFromDb = trpc.user.byId.useMutation({
+  const { mutate } = trpc.user.byId.useMutation({
     onSuccess(data) {
       setUser(data);
       if (data?.spotifyData) {
@@ -85,7 +85,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode[] | React.ReactN
   }, []);
 
   React.useEffect(() => {
-    getUserFromDb.mutate(googleUserInfo?.uid);
+    mutate(googleUserInfo?.uid);
   }, [googleUserInfo]);
 
   React.useEffect(() => {
