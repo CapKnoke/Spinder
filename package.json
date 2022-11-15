@@ -5,6 +5,7 @@
   "scripts": {
     "db-generate": "turbo db-generate",
     "db-push": "turbo db-push",
+    "db-resetMatches": "turbo db-resetMatches",
     "build": "turbo build",
     "dev": "turbo dev --parallel",
     "clean:workspaces": "turbo clean",

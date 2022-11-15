@@ -28,8 +28,26 @@ model User {
   interestedIn  InterestedIn
   bio           String?      @db.Text
   spotifyData   Json?        @db.Json
+  liked         User[]       @relation("liked")
+  likedBy       User[]       @relation("liked")
+  swiped        User[]       @relation("swiped")
+  swipedBy      User[]       @relation("swiped")
   createdAt     DateTime     @default(now())
-  updatedAt     DateTime?
+  updatedAt     DateTime?    @updatedAt
+  matches       Match[]      @relation("match")
+  inMatches     Match[]      @relation("inMatch")
+}
+
+model Match {
+  id            String   @id @default(cuid())
+  user          User     @relation("match", fields: [userId], references: [id])
+  userId        String
+  matchedUser   User     @relation("inMatch", fields: [matchedUserId], references: [id])
+  matchedUserId String
+  seen          Boolean  @default(false)
+  createdAt     DateTime @default(now())
+
+  @@unique([userId, matchedUserId])
 }
 
 enum Gender {

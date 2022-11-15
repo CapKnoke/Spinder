@@ -31,7 +31,7 @@ const SpotifyConnect: React.FC<{
     discovery
   );
 
-  const setSpotifyData = trpc.user.setSpotifyData.useMutation({
+  const { mutate } = trpc.user.setSpotifyData.useMutation({
     onSuccess(data) {
       if (data.spotifyData) {
         setProfileComplete(true);
@@ -39,7 +39,7 @@ const SpotifyConnect: React.FC<{
       }
     },
     onError(err) {
-      setError(new Error(err.message));
+      setError(err);
     },
     onSettled() {
       setLoading(false);
@@ -52,7 +52,7 @@ const SpotifyConnect: React.FC<{
       setLoading(false);
     });
     if (user && response?.type === 'success' && response.authentication) {
-      setSpotifyData.mutate({
+      mutate({
         userId: user.id,
         spotifyAccessCode: response.authentication.accessToken,
       });

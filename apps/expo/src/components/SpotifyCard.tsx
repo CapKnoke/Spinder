@@ -14,7 +14,7 @@ import type {
   SpotifyTrack,
   SpotifyUserData,
 } from 'src/types/spotify';
-import { User } from 'src/types/trpc';
+import { User } from '.prisma/client';
 
 const TrackItem: React.FC<{ track: SpotifyTrack }> = ({ track }) => {
   const albumImage = track.album.images[1];

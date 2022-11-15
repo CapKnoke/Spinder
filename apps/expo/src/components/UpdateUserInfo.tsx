@@ -33,7 +33,7 @@ const UpdateUserInfo: React.FC<IUpdateUserInfoProps> = ({
   interestedIn,
   bio,
 }) => {
-  const { googleUserInfo, setLoading, setUser } = useAuth();
+  const { googleUserInfo, setLoading, setUser, setError } = useAuth();
   const { colors } = useTheme();
   const {
     control,
@@ -56,6 +56,9 @@ const UpdateUserInfo: React.FC<IUpdateUserInfoProps> = ({
     onSuccess(data) {
       setUser(data);
     },
+    onError(err) {
+      setError(err);
+    },
     onSettled() {
       setLoading(false);
     },
@@ -64,8 +67,8 @@ const UpdateUserInfo: React.FC<IUpdateUserInfoProps> = ({
     if (googleUserInfo) {
       mutate({
         ...data,
-        email: googleUserInfo?.email || 'example@mail.com',
-        emailVerified: googleUserInfo?.emailVerified || false,
+        email: googleUserInfo.email || 'example@mail.com',
+        emailVerified: googleUserInfo.emailVerified || false,
         id: googleUserInfo.uid,
         bio: data.bio || undefined,
       });

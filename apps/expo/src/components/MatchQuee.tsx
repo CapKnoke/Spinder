@@ -2,24 +2,48 @@ import * as React from 'react';
 import { View, Image, Text, ActivityIndicator } from 'react-native';
 import Swiper from '@acme/react-native-deck-swiper';
 import { useTheme } from '@react-navigation/native';
-import { User } from '../types/trpc';
 import SpotifyCard from './SpotifyCard';
+import { trpc } from '../utils/trpc';
+import useAuth from '../hooks/useAuth';
+import { User } from '.prisma/client';
 
 const MatchQuee: React.FC<{ quee: User[] | null; swipeRef: React.RefObject<Swiper<User>> }> = ({
   quee,
   swipeRef,
 }) => {
+  const { user, setError } = useAuth();
   const { colors } = useTheme();
+  const utils = trpc.useContext();
+  const swipeMutation = trpc.user.swipe.useMutation({
+    onSuccess(data) {
+      console.log(`You swiped PASS on ${data.displayName}`);
+    },
+    onError(err) {
+      setError(err);
+    },
+  });
+  const likeMutation = trpc.user.like.useMutation({
+    onSuccess({ match, displayName }) {
+      console.log(`You swiped Like on ${displayName}`);
+      if (match) {
+        console.log("It's a match!");
+        utils.user.newMatches.invalidate();
+      }
+    },
+    onError(err) {
+      setError(err);
+    },
+  });
   const handleSwipeLeft = (index: number) => {
-    if (quee) {
+    if (quee && user) {
       const swipedUser = quee[index];
-      console.log(`you swiped PASS on ${swipedUser.displayName}`);
+      swipeMutation.mutate({ userId: user.id, targetUserId: swipedUser.id });
     }
   };
   const handleSwipeRight = (index: number) => {
-    if (quee) {
+    if (quee && user) {
       const swipedUser = quee[index];
-      console.log(`you swiped PASS on ${swipedUser.displayName}`);
+      likeMutation.mutate({ userId: user.id, targetUserId: swipedUser.id });
     }
   };
   return (
@@ -27,6 +51,13 @@ const MatchQuee: React.FC<{ quee: User[] | null; swipeRef: React.RefObject<Swipe
       {quee ? (
         <Swiper
           ref={swipeRef}
+          pointerEvents="box-none"
+          cards={quee}
+          stackSize={2}
+          verticalSwipe={false}
+          animateCardOpacity
+          onSwipedLeft={handleSwipeLeft}
+          onSwipedRight={handleSwipeRight}
           cardStyle={{
             top: 0,
             left: 0,
@@ -35,13 +66,6 @@ const MatchQuee: React.FC<{ quee: User[] | null; swipeRef: React.RefObject<Swipe
             width: 'auto',
             height: 'auto',
           }}
-          pointerEvents="box-none"
-          cards={quee}
-          stackSize={2}
-          verticalSwipe={false}
-          animateCardOpacity
-          onSwipedLeft={handleSwipeLeft}
-          onSwipedRight={handleSwipeRight}
           overlayLabels={{
             left: {
               title: 'NOPE',
@@ -84,7 +108,10 @@ const MatchQuee: React.FC<{ quee: User[] | null; swipeRef: React.RefObject<Swipe
           }
         />
       ) : (
-        <View className="flex-1 items-center justify-center">
+        <View
+          style={{ backgroundColor: colors.card }}
+          className="flex-1 rounded-md overflow-hidden items-center justify-center"
+        >
           <ActivityIndicator size="large" />
         </View>
       )}

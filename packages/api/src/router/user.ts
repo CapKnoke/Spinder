@@ -1,18 +1,107 @@
 import { t } from '../trpc';
 import { z } from 'zod';
+import { Prisma } from '@acme/db';
 import { getSpotifyUserData } from '../utils/spotify';
-import { TRPCError } from '@trpc/server';
 
 export const userRouter = t.router({
-  all: t.procedure.query(({ ctx }) => {
-    return ctx.prisma.user.findMany();
+  // QUERIES
+  byId: t.procedure.input(z.string().nullish()).query(({ ctx, input }) => {
+    if (!input) return null;
+    return ctx.prisma.user.findUnique({ where: { id: input } });
   }),
-  byId: t.procedure.input(z.string().nullish()).mutation(async ({ ctx, input }) => {
-    if (input) {
-      return ctx.prisma.user.findUnique({ where: { id: input } });
-    }
-    return null;
+  matchQuee: t.procedure.input(z.string().nullish()).query(({ ctx, input }) => {
+    if (!input) return [];
+    return ctx.prisma.user.findMany({
+      where: {
+        NOT: {
+          OR: [
+            { id: input },
+            { swiped: { some: { id: input } } },
+            { likedBy: { some: { id: input } } },
+          ],
+        },
+      },
+    });
   }),
+  matches: t.procedure.input(z.string().nullish()).query(async ({ ctx, input }) => {
+    if (!input) return [];
+    const { matches } = await ctx.prisma.user.findUniqueOrThrow({
+      where: { id: input },
+      select: {
+        matches: {
+          select: {
+            id: true,
+            seen: true,
+            matchedUser: { select: { displayName: true, gender: true } },
+          },
+        },
+      },
+    });
+    return matches;
+  }),
+  newMatches: t.procedure.input(z.string().nullish()).query(async ({ ctx, input }) => {
+    if (!input) return [];
+    const { matches } = await ctx.prisma.user.findUniqueOrThrow({
+      where: { id: input },
+      select: {
+        matches: {
+          where: { seen: false },
+          select: {
+            id: true,
+            seen: true,
+            matchedUser: { select: { displayName: true, gender: true } },
+          },
+        },
+      },
+    });
+    return matches;
+  }),
+  // MUTATIONS
+  swipe: t.procedure
+    .input(z.object({ userId: z.string(), targetUserId: z.string() }))
+    .mutation(({ ctx, input }) => {
+      return ctx.prisma.user.update({
+        where: { id: input.targetUserId },
+        data: {
+          swipedBy: { connect: { id: input.userId } },
+        },
+        select: { displayName: true },
+      });
+    }),
+  like: t.procedure
+    .input(z.object({ userId: z.string(), targetUserId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const likedUser = await ctx.prisma.user.update({
+        where: { id: input.targetUserId },
+        data: {
+          likedBy: { connect: { id: input.userId } },
+        },
+        select: {
+          id: true,
+          displayName: true,
+          liked: { select: { id: true } },
+        },
+      });
+      const isMatch = likedUser.liked.some(({ id }) => id === input.userId);
+      if (isMatch) {
+        try {
+          await ctx.prisma.match.createMany({
+            data: [
+              { userId: input.userId, matchedUserId: input.targetUserId },
+              { userId: input.targetUserId, matchedUserId: input.userId },
+            ],
+          });
+          return { displayName: likedUser.displayName, match: true };
+        } catch (err) {
+          if (err instanceof Prisma.PrismaClientKnownRequestError) {
+            console.log(err.message);
+            return { displayName: likedUser.displayName, match: false };
+          }
+          throw err;
+        }
+      }
+      return { displayName: likedUser.displayName, match: isMatch };
+    }),
   updateOrCreate: t.procedure
     .input(
       z.object({
@@ -26,7 +115,7 @@ export const userRouter = t.router({
         bio: z.string().optional(),
       })
     )
-    .mutation(async ({ ctx, input }) => {
+    .mutation(({ ctx, input }) => {
       return ctx.prisma.user.upsert({
         where: { id: input.id },
         create: input,
