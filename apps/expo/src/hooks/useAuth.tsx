@@ -11,10 +11,11 @@ import {
   User as FireBaseUser,
 } from 'firebase/auth';
 
-import type { User } from '../types/trpc';
-
 import { auth } from '../lib/firebase';
 import { trpc } from '../utils/trpc';
+import { TRPCClientErrorLike } from '@trpc/client';
+import { AppRouter } from '@acme/api';
+import { User } from '.prisma/client';
 
 const EXPO_REDIRECT_PARAMS = { useProxy: true, projectNameForProxy: '@capknoke/tinder-clone' };
 const NATIVE_REDIRECT_PARAMS = { native: 'dev.sindrebakken.tinderclone://' };
@@ -28,8 +29,8 @@ interface IAuthContext {
   profileComplete: boolean;
   setProfileComplete: React.Dispatch<React.SetStateAction<boolean>>;
   googleUserInfo: FireBaseUser | null;
-  error: Error | null;
-  setError: React.Dispatch<React.SetStateAction<Error | null>>;
+  error: Error | TRPCClientErrorLike<AppRouter> | null;
+  setError: React.Dispatch<React.SetStateAction<Error | TRPCClientErrorLike<AppRouter> | null>>;
   loading: boolean;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   signInWithGoogle: () => Promise<void>;
@@ -52,13 +53,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode[] | React.ReactN
   WebBrowser.maybeCompleteAuthSession();
 
   const [googleUserInfo, setGoogleUserInfo] = React.useState<FireBaseUser | null>(null);
-  const [error, setError] = React.useState<Error | null>(null);
+  const [error, setError] = React.useState<Error | TRPCClientErrorLike<AppRouter> | null>(null);
   const [loading, setLoading] = React.useState<boolean>(true);
   const [loadingInitial, setLoadingInitial] = React.useState<boolean>(true);
   const [user, setUser] = React.useState<User | null>(null);
   const [profileComplete, setProfileComplete] = React.useState<boolean>(false);
 
-  const { mutate } = trpc.user.byId.useMutation({
+  trpc.user.byId.useQuery(googleUserInfo?.uid, {
     onSuccess(data) {
       setUser(data);
       if (data?.spotifyData) {
@@ -68,7 +69,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode[] | React.ReactN
       }
     },
     onError(err) {
-      setError(new Error(err.message));
+      setError(err);
     },
     onSettled() {
       setLoadingInitial(false);
@@ -83,10 +84,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode[] | React.ReactN
 
     return () => unsubscribe();
   }, []);
-
-  React.useEffect(() => {
-    mutate(googleUserInfo?.uid);
-  }, [googleUserInfo]);
 
   React.useEffect(() => {
     if (response?.type === 'success' && response.authentication) {

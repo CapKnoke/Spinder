@@ -3,35 +3,64 @@ import { View, Text, Button, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AntDesign } from '@expo/vector-icons';
 import Swiper from '@acme/react-native-deck-swiper';
+import { useTheme } from '@react-navigation/native';
 
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../navigation';
 
 import { trpc } from '../utils/trpc';
 import useAuth from '../hooks/useAuth';
-import { User } from '../types/trpc';
+import { Match, User } from '.prisma/client';
 import MatchQuee from '../components/MatchQuee';
+import { NewMatch } from 'src/types/trpc';
 
 const HomeScreen: React.FC<NativeStackScreenProps<RootStackParamList, 'Home'>> = ({
   navigation,
 }) => {
-  const [quee, setQuee] = React.useState<User[] | null>(null);
-  const swipeRef = React.useRef<Swiper<User>>(null);
-  const { logout } = useAuth();
+  const { logout, user, setError } = useAuth();
+  const { colors } = useTheme();
 
-  trpc.user.all.useQuery(undefined, {
+  const [quee, setQuee] = React.useState<User[] | null>(null);
+  const [newMatch, setNewMatch] = React.useState<NewMatch | null>(null);
+  const [newMatches, setNewMatches] = React.useState<number>(0);
+
+  const swipeRef = React.useRef<Swiper<User>>(null);
+
+  trpc.user.matchQuee.useQuery(user?.id, {
+    enabled: !!user,
     onSuccess(data) {
       if (data.length) {
         setQuee(data);
         return;
       }
     },
+    onError(err) {
+      setError(err);
+    },
   });
+
+  trpc.user.newMatches.useQuery(user?.id, {
+    enabled: !!user,
+    onSuccess(newMatches) {
+      setNewMatches(newMatches.length);
+      setNewMatch(newMatches[0]);
+    },
+    refetchInterval: 10000,
+  });
+
+  React.useEffect(() => {
+    if (newMatch) {
+      navigation.navigate('Match', { match: newMatch });
+    }
+  }, [newMatch]);
 
   return (
     <SafeAreaView className="flex-1 p-4">
       <View className="py-2">
         <Button title="Log out" onPress={() => logout()} />
+        <Text style={{ color: colors.text }} className="text-center text-lg">
+          New Matches: {newMatches}
+        </Text>
       </View>
       <MatchQuee quee={quee} swipeRef={swipeRef} />
       <View className="flex-row justify-evenly">

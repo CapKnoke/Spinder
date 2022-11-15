@@ -8,10 +8,13 @@ import useAuth from '../hooks/useAuth';
 import LoadingScreen from '../screens/loading';
 import ErrorScreen from '../screens/error';
 import LoginStack from './loginStack';
+import MatchModal from '../components/modals/MatchModal';
+import { NewMatch } from 'src/types/trpc';
 
 export type RootStackParamList = {
   Home: undefined;
   LoginStack: undefined;
+  Match: { match: NewMatch };
 };
 
 const StackNavigation: React.FC = () => {
@@ -40,9 +43,14 @@ const StackNavigation: React.FC = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {profileComplete ? (
-        <Stack.Group>
-          <Stack.Screen name="Home" component={HomeScreen} />
-        </Stack.Group>
+        <>
+          <Stack.Group>
+            <Stack.Screen name="Home" component={HomeScreen} />
+          </Stack.Group>
+          <Stack.Group screenOptions={{ presentation: 'transparentModal' }}>
+            <Stack.Screen name="Match" component={MatchModal} />
+          </Stack.Group>
+        </>
       ) : (
         <Stack.Screen name="LoginStack" component={LoginStack} />
       )}
