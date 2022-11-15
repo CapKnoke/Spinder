@@ -1,6 +1,6 @@
 import { t } from '../trpc';
 import { z } from 'zod';
-import Prisma from '@acme/db';
+import { Prisma } from '@acme/db';
 import { getSpotifyUserData } from '../utils/spotify';
 
 export const userRouter = t.router({
