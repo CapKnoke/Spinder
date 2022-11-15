@@ -10,9 +10,8 @@ import type { RootStackParamList } from '../navigation';
 
 import { trpc } from '../utils/trpc';
 import useAuth from '../hooks/useAuth';
-import { Match, User } from '.prisma/client';
+import { User } from '.prisma/client';
 import MatchQuee from '../components/MatchQuee';
-import { NewMatch } from 'src/types/trpc';
 
 const HomeScreen: React.FC<NativeStackScreenProps<RootStackParamList, 'Home'>> = ({
   navigation,
@@ -21,7 +20,6 @@ const HomeScreen: React.FC<NativeStackScreenProps<RootStackParamList, 'Home'>> =
   const { colors } = useTheme();
 
   const [quee, setQuee] = React.useState<User[] | null>(null);
-  const [newMatch, setNewMatch] = React.useState<NewMatch | null>(null);
   const [newMatches, setNewMatches] = React.useState<number>(0);
 
   const swipeRef = React.useRef<Swiper<User>>(null);
@@ -43,16 +41,12 @@ const HomeScreen: React.FC<NativeStackScreenProps<RootStackParamList, 'Home'>> =
     enabled: !!user,
     onSuccess(newMatches) {
       setNewMatches(newMatches.length);
-      setNewMatch(newMatches[0]);
+      if (newMatches.length) {
+        navigation.navigate('Match', { match: newMatches[0] });
+      }
     },
     refetchInterval: 10000,
   });
-
-  React.useEffect(() => {
-    if (newMatch) {
-      navigation.navigate('Match', { match: newMatch });
-    }
-  }, [newMatch]);
 
   return (
     <SafeAreaView className="flex-1 p-4">

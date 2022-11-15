@@ -76,7 +76,7 @@ const MatchModal: React.FC<NativeStackScreenProps<RootStackParamList, 'Match'>> 
         <TouchableOpacity
           style={{ backgroundColor: colors.card }}
           className="flex-row items-center justify-center py-2 rounded-md"
-          onPress={() => navigation.replace('Home')}
+          onPress={() => navigation.popToTop()}
         >
           <MaterialCommunityIcons
             style={{ color: colors.text, fontSize: 24, paddingRight: 5 }}
