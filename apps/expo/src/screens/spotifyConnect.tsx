@@ -1,18 +1,18 @@
 import * as React from 'react';
 import { View, Text, Button } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTheme } from '@react-navigation/native';
+
+import SpotifyConnect from '../components/SpotifyConnect';
+import useAuth from '../hooks/useAuth';
+import { trpc } from '../utils/trpc';
 
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { LoginStackParamList } from '../navigation/loginStack';
 
-import useAuth from '../hooks/useAuth';
-import SpotifyConnect from '../components/SpotifyConnect';
-import { trpc } from '../utils/trpc';
-import { useTheme } from '@react-navigation/native';
-
 const SpotifyConnectScreen: React.FC<
   NativeStackScreenProps<LoginStackParamList, 'SpotifyConnect'>
-> = ({ navigation }) => {
+> = () => {
   const { logout } = useAuth();
   const { colors } = useTheme();
   const spotifyCredentials = trpc.credentials.getSpotifyCredentials.useQuery();

@@ -2,16 +2,16 @@ import * as React from 'react';
 import { View, Text, Button, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AntDesign } from '@expo/vector-icons';
-import Swiper from '@acme/react-native-deck-swiper';
 import { useTheme } from '@react-navigation/native';
+import Swiper from '@acme/react-native-deck-swiper';
+
+import MatchQuee from '../components/MatchQuee';
+import { trpc } from '../utils/trpc';
+import useAuth from '../hooks/useAuth';
 
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../navigation';
-
-import { trpc } from '../utils/trpc';
-import useAuth from '../hooks/useAuth';
-import { User } from '.prisma/client';
-import MatchQuee from '../components/MatchQuee';
+import type { User } from '.prisma/client';
 
 const HomeScreen: React.FC<NativeStackScreenProps<RootStackParamList, 'Home'>> = ({
   navigation,

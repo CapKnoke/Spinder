@@ -32,7 +32,7 @@ export const userRouter = t.router({
           select: {
             id: true,
             seen: true,
-            matchedUser: { select: { displayName: true, gender: true } },
+            matchedUser: { select: { id: true, displayName: true, gender: true } },
           },
         },
       },

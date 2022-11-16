@@ -11,11 +11,12 @@ import {
   User as FireBaseUser,
 } from 'firebase/auth';
 
-import { auth } from '../lib/firebase';
 import { trpc } from '../utils/trpc';
-import { TRPCClientErrorLike } from '@trpc/client';
-import { AppRouter } from '@acme/api';
-import { User } from '.prisma/client';
+import { auth } from '../lib/firebase';
+
+import type { TRPCClientErrorLike } from '@trpc/client';
+import type { AppRouter } from '@acme/api';
+import type { User } from '.prisma/client';
 
 const EXPO_REDIRECT_PARAMS = { useProxy: true, projectNameForProxy: '@capknoke/tinder-clone' };
 const NATIVE_REDIRECT_PARAMS = { native: 'dev.sindrebakken.tinderclone://' };

@@ -1,4 +1,4 @@
-import spotifySampleData from 'data/spotifySample.json';
+import spotifySampleData from '../../data/spotifySample.json';
 
 type SpotifyUserData = typeof spotifySampleData;
 type SpotifyTopTracks = typeof spotifySampleData.topTracks;

@@ -1,11 +1,13 @@
 import * as React from 'react';
 import { View, Image, Text, ActivityIndicator } from 'react-native';
-import Swiper from '@acme/react-native-deck-swiper';
 import { useTheme } from '@react-navigation/native';
+import Swiper from '@acme/react-native-deck-swiper';
+
 import SpotifyCard from './SpotifyCard';
 import { trpc } from '../utils/trpc';
 import useAuth from '../hooks/useAuth';
-import { User } from '.prisma/client';
+
+import type { User } from '.prisma/client';
 
 const MatchQuee: React.FC<{ quee: User[] | null; swipeRef: React.RefObject<Swiper<User>> }> = ({
   quee,

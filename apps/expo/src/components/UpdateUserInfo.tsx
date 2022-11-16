@@ -1,12 +1,12 @@
 import { Text, View, TextInput, Button, TouchableOpacity } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { Picker } from '@react-native-picker/picker';
+import { useTheme } from '@react-navigation/native';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 
 import useAuth from '../hooks/useAuth';
 import { trpc } from '../utils/trpc';
-import { useTheme } from '@react-navigation/native';
 
 interface IUpdateUserInfoProps {
   displayName?: string;

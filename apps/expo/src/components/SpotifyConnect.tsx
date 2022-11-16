@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { Platform, TouchableOpacity, Text } from 'react-native';
+import { useTheme } from '@react-navigation/native';
 import * as AuthSession from 'expo-auth-session';
-
-import type { inferProcedureOutput } from '@trpc/server';
-import type { AppRouter } from '@acme/api';
 
 import { trpc } from '../utils/trpc';
 import useAuth from '../hooks/useAuth';
-import { useTheme } from '@react-navigation/native';
+
+import type { inferProcedureOutput } from '@trpc/server';
+import type { AppRouter } from '@acme/api';
 
 const useProxy = Platform.select({ web: false, default: true });
 const redirectUri = AuthSession.makeRedirectUri({ useProxy });

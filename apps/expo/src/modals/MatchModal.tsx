@@ -2,12 +2,13 @@ import * as React from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
 import { useTheme } from '@react-navigation/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 
-import { trpc } from '../../utils/trpc';
-import useAuth from '../../hooks/useAuth';
-import { RootStackParamList } from '../../navigation';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { trpc } from '../utils/trpc';
+import useAuth from '../hooks/useAuth';
+
+import type { RootStackParamList } from '../navigation';
 
 const MatchModal: React.FC<NativeStackScreenProps<RootStackParamList, 'Match'>> = ({
   navigation,
@@ -23,8 +24,8 @@ const MatchModal: React.FC<NativeStackScreenProps<RootStackParamList, 'Match'>> 
     },
   });
 
-  const femaleAvatar = require('../../img/avatar_female.png');
-  const maleAvatar = require('../../img/avatar_male.png');
+  const femaleAvatar = require('../img/avatar_female.png');
+  const maleAvatar = require('../img/avatar_male.png');
   const { match } = route.params;
 
   React.useEffect(() => {
@@ -41,7 +42,7 @@ const MatchModal: React.FC<NativeStackScreenProps<RootStackParamList, 'Match'>> 
     >
       <View className="items-center">
         <Image
-          source={require('../../img/its_a_match.png')}
+          source={require('../img/its_a_match.png')}
           style={{ resizeMode: 'center', opacity: 100 }}
         />
         <Text
