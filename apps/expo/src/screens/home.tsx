@@ -17,10 +17,7 @@ const HomeScreen: React.FC<NativeStackScreenProps<RootStackParamList, 'Home'>> =
   navigation,
 }) => {
   const { logout, user, setError } = useAuth();
-  const { colors } = useTheme();
-
   const [quee, setQuee] = React.useState<User[] | null>(null);
-  const [newMatches, setNewMatches] = React.useState<number>(0);
 
   const swipeRef = React.useRef<Swiper<User>>(null);
 
@@ -37,24 +34,10 @@ const HomeScreen: React.FC<NativeStackScreenProps<RootStackParamList, 'Home'>> =
     },
   });
 
-  trpc.user.newMatches.useQuery(user?.id, {
-    enabled: !!user,
-    onSuccess(newMatches) {
-      setNewMatches(newMatches.length);
-      if (newMatches.length) {
-        navigation.navigate('Match', { match: newMatches[0] });
-      }
-    },
-    refetchInterval: 10000,
-  });
-
   return (
     <SafeAreaView className="flex-1 p-4">
       <View className="py-2">
         <Button title="Log out" onPress={() => logout()} />
-        <Text style={{ color: colors.text }} className="text-center text-lg">
-          New Matches: {newMatches}
-        </Text>
       </View>
       <MatchQuee quee={quee} swipeRef={swipeRef} />
       <View className="flex-row justify-evenly">

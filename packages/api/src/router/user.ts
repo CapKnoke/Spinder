@@ -1,7 +1,11 @@
 import { t } from '../trpc';
 import { z } from 'zod';
-import { Prisma } from '@acme/db';
+import { Prisma, User } from '@acme/db';
 import { getSpotifyUserData } from '../utils/spotify';
+import { createMatch, generateMatchId } from '../utils/firestore';
+import { likeUserSelect } from './utils/selectors';
+import { userInteractInput } from './utils/schemas';
+import { likeUser } from './utils/prisma';
 
 export const userRouter = t.router({
   // QUERIES
@@ -23,82 +27,27 @@ export const userRouter = t.router({
       },
     });
   }),
-  matches: t.procedure.input(z.string().nullish()).query(async ({ ctx, input }) => {
-    if (!input) return [];
-    const { matches } = await ctx.prisma.user.findUniqueOrThrow({
-      where: { id: input },
-      select: {
-        matches: {
-          select: {
-            id: true,
-            seen: true,
-            matchedUser: { select: { id: true, displayName: true, gender: true } },
-          },
-        },
-      },
-    });
-    return matches;
-  }),
-  newMatches: t.procedure.input(z.string().nullish()).query(async ({ ctx, input }) => {
-    if (!input) return [];
-    const { matches } = await ctx.prisma.user.findUniqueOrThrow({
-      where: { id: input },
-      select: {
-        matches: {
-          where: { seen: false },
-          select: {
-            id: true,
-            seen: true,
-            matchedUser: { select: { displayName: true, gender: true } },
-          },
-        },
-      },
-    });
-    return matches;
-  }),
   // MUTATIONS
-  swipe: t.procedure
-    .input(z.object({ userId: z.string(), targetUserId: z.string() }))
-    .mutation(({ ctx, input }) => {
-      return ctx.prisma.user.update({
-        where: { id: input.targetUserId },
-        data: {
-          swipedBy: { connect: { id: input.userId } },
-        },
-        select: { displayName: true },
-      });
-    }),
+  swipe: t.procedure.input(userInteractInput).mutation(({ ctx, input }) => {
+    return ctx.prisma.user.update({
+      where: { id: input.targetUserId },
+      data: {
+        swipedBy: { connect: { id: input.userId } },
+      },
+      select: { displayName: true },
+    });
+  }),
   like: t.procedure
     .input(z.object({ userId: z.string(), targetUserId: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      const likedUser = await ctx.prisma.user.update({
-        where: { id: input.targetUserId },
-        data: {
-          likedBy: { connect: { id: input.userId } },
-        },
-        select: {
-          id: true,
-          displayName: true,
-          liked: { select: { id: true } },
-        },
-      });
+      const likedUser = await likeUser(ctx.prisma, input);
       const isMatch = likedUser.liked.some(({ id }) => id === input.userId);
       if (isMatch) {
-        try {
-          await ctx.prisma.match.createMany({
-            data: [
-              { userId: input.userId, matchedUserId: input.targetUserId },
-              { userId: input.targetUserId, matchedUserId: input.userId },
-            ],
-          });
-          return { displayName: likedUser.displayName, match: true };
-        } catch (err) {
-          if (err instanceof Prisma.PrismaClientKnownRequestError) {
-            console.log(err.message);
-            return { displayName: likedUser.displayName, match: false };
-          }
-          throw err;
-        }
+        const currentUser = await ctx.prisma.user.findUniqueOrThrow({
+          where: { id: input.userId },
+          select: likeUserSelect,
+        });
+        await createMatch(currentUser, likedUser);
       }
       return { displayName: likedUser.displayName, match: isMatch };
     }),

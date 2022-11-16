@@ -26,9 +26,7 @@ const redirectUri = AuthSession.makeRedirectUri(REDIRECT_PARAMS);
 
 interface IAuthContext {
   user: User | null;
-  setUser: React.Dispatch<React.SetStateAction<User | null>>;
   profileComplete: boolean;
-  setProfileComplete: React.Dispatch<React.SetStateAction<boolean>>;
   googleUserInfo: FireBaseUser | null;
   error: Error | TRPCClientErrorLike<AppRouter> | null;
   setError: React.Dispatch<React.SetStateAction<Error | TRPCClientErrorLike<AppRouter> | null>>;
@@ -113,9 +111,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode[] | React.ReactN
   const memoedValue = React.useMemo(
     () => ({
       user,
-      setUser,
       profileComplete,
-      setProfileComplete,
       loading,
       setLoading,
       error,
@@ -126,9 +122,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode[] | React.ReactN
     }),
     [
       user,
-      setUser,
       profileComplete,
-      setProfileComplete,
       loading,
       setLoading,
       error,

@@ -18,11 +18,11 @@ const MatchModal: React.FC<NativeStackScreenProps<RootStackParamList, 'Match'>> 
   const { colors } = useTheme();
   const utils = trpc.useContext();
 
-  const { mutate } = trpc.match.setSeen.useMutation({
-    onSettled() {
-      utils.user.newMatches.invalidate();
-    },
-  });
+  // const { mutate } = trpc.match.setSeen.useMutation({
+  //   onSettled() {
+  //     utils.user.newMatches.invalidate();
+  //   },
+  // });
 
   const femaleAvatar = require('../img/avatar_female.png');
   const maleAvatar = require('../img/avatar_male.png');
@@ -30,7 +30,7 @@ const MatchModal: React.FC<NativeStackScreenProps<RootStackParamList, 'Match'>> 
 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('beforeRemove', () => {
-      mutate(match.id);
+      // mutate(match.id);
     });
     return () => unsubscribe();
   }, []);

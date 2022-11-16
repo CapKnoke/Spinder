@@ -1,78 +1,65 @@
-import { setDoc, getDocs, addDoc, updateDoc } from 'firebase/firestore';
+import { setDoc, getDocs, addDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { createCol, createDoc } from '../lib/firebase';
-import { ChatMessage, Conversation, ConversationIdInput } from '../types/firestore';
 
+import { generateMatchId, MatchIdInput } from '@acme/api/src/utils/firestore';
+
+import type { ChatMessage, Match } from '../types/firestore';
 import type { MatchListItem } from '../types/trpc';
 
-export const getConversationId = ({ userId, targetUserId }: ConversationIdInput) => {
-  return `${userId}${targetUserId}`;
-};
-
-export const getConversations = async (userId: string) => {
-  const chatList = await getDocs<Conversation>(createCol('users', userId, 'conversations'));
+export const getUserMatches = async (userId: string) => {
+  const chatList = await getDocs<Match>(createCol('users', userId, 'matches'));
   return chatList.docs.map((userDoc) => userDoc.data());
 };
 
-export const updateConversations = async (userId: string, matches: MatchListItem[]) => {
-  const updates = matches.map(({ matchedUser }) => {
-    return setDoc<Conversation>(
+export const updateUserMatches = async (userId: string, matches: MatchListItem[]) => {
+  const updates = matches.map(({ matchedUsers }) => {
+    const matchedUser = matchedUsers.find(({ id }) => id !== userId);
+    if (!matchedUser) return;
+    return setDoc<Match>(
       createDoc(
         'users',
         userId,
-        'conversations',
-        getConversationId({ userId, targetUserId: matchedUser.id })
+        'matches',
+        generateMatchId({ userId, targetUserId: matchedUsers[0].id })
       ),
       {
-        name: matchedUser.displayName,
+        matchedUserIds: [userId, matchedUser.id],
+        createdAt: serverTimestamp(),
+      },
+      {
+        merge: true,
       }
     );
   });
   await Promise.all(updates);
 };
 
-export const getMessages = async ({ userId, targetUserId }: ConversationIdInput) => {
+export const getMessages = async ({ userId, targetUserId }: MatchIdInput) => {
   const messages = await getDocs<ChatMessage>(
-    createCol(
-      'users',
-      userId,
-      'conversations',
-      getConversationId({ userId, targetUserId }),
-      'messages'
-    )
+    createCol('users', userId, 'matches', generateMatchId({ userId, targetUserId }), 'messages')
   );
   return messages.docs.map((messageDoc) => messageDoc.data());
 };
 
-export const sendMessage = async (
-  { userId, targetUserId }: ConversationIdInput,
-  message: string
-) => {
+export const sendMessage = async ({ userId, targetUserId }: MatchIdInput, message: string) => {
   addDoc<ChatMessage>(
-    createCol(
-      'users',
-      userId,
-      'conversations',
-      getConversationId({ userId, targetUserId }),
-      'messages'
-    ),
+    createCol('users', userId, 'matches', generateMatchId({ userId, targetUserId }), 'messages'),
     {
       message,
-      createdAt: Date.now(),
+      senderId: userId,
+      createdAt: serverTimestamp(),
       seen: false,
     }
   );
 };
 
-export const seeMessage = async (
-  { userId, targetUserId }: ConversationIdInput,
-  messageId: string
-) => {
+export const seeMessage = async ({ userId, targetUserId }: MatchIdInput, messageId: string) => {
   updateDoc<ChatMessage>(
     createDoc(
       'users',
       userId,
       'conversations',
-      getConversationId({ userId, targetUserId }),
+      generateMatchId({ userId, targetUserId }),
       messageId
     ),
     {
