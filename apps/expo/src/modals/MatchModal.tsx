@@ -5,10 +5,10 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 
-import { trpc } from '../utils/trpc';
 import useAuth from '../hooks/useAuth';
 
 import type { RootStackParamList } from '../navigation';
+import { seeMatch } from '../utils/firestore';
 
 const MatchModal: React.FC<NativeStackScreenProps<RootStackParamList, 'Match'>> = ({
   navigation,
@@ -16,24 +16,19 @@ const MatchModal: React.FC<NativeStackScreenProps<RootStackParamList, 'Match'>> 
 }) => {
   const { user } = useAuth();
   const { colors } = useTheme();
-  const utils = trpc.useContext();
 
-  // const { mutate } = trpc.match.setSeen.useMutation({
-  //   onSettled() {
-  //     utils.user.newMatches.invalidate();
-  //   },
-  // });
+  const { match } = route.params;
 
   const femaleAvatar = require('../img/avatar_female.png');
   const maleAvatar = require('../img/avatar_male.png');
-  const { match } = route.params;
 
   React.useEffect(() => {
-    const unsubscribe = navigation.addListener('beforeRemove', () => {
-      // mutate(match.id);
+    if (!user) return;
+    const unsubscribe = navigation.addListener('beforeRemove', async () => {
+      await seeMatch(user.id, match.id);
     });
-    return () => unsubscribe();
-  }, []);
+    return unsubscribe;
+  }, [user]);
 
   return (
     <SafeAreaView
@@ -48,7 +43,7 @@ const MatchModal: React.FC<NativeStackScreenProps<RootStackParamList, 'Match'>> 
         <Text
           style={{ color: colors.text }}
           className="text-center text-lg pb-8"
-        >{`You matched with ${match.matchedUser.displayName}! Send them a message?`}</Text>
+        >{`You matched with ${match.matchedUser.name}! Send them a message?`}</Text>
         <View className="flex-row w-full justify-evenly">
           <Image
             source={user?.gender === 'MALE' ? maleAvatar : femaleAvatar}

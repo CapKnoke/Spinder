@@ -1,8 +1,6 @@
 import { t } from '../trpc';
 import { z } from 'zod';
-import { Prisma, User } from '@acme/db';
 import { getSpotifyUserData } from '../utils/spotify';
-import { createMatch, generateMatchId } from '../utils/firestore';
 import { likeUserSelect } from './utils/selectors';
 import { userInteractInput } from './utils/schemas';
 import { likeUser } from './utils/prisma';
@@ -21,6 +19,7 @@ export const userRouter = t.router({
           OR: [
             { id: input },
             { swiped: { some: { id: input } } },
+            { swipedBy: { some: { id: input } } },
             { likedBy: { some: { id: input } } },
           ],
         },
@@ -37,19 +36,24 @@ export const userRouter = t.router({
       select: { displayName: true },
     });
   }),
-  like: t.procedure
+  like: t.procedure.input(userInteractInput).mutation(async ({ ctx, input }) => {
+    const likedUser = await likeUser(ctx.prisma, input);
+    const isMatch = likedUser.liked.some(({ id }) => id === input.userId);
+    return { likedUser, match: isMatch };
+  }),
+  unlike: t.procedure
     .input(z.object({ userId: z.string(), targetUserId: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      const likedUser = await likeUser(ctx.prisma, input);
-      const isMatch = likedUser.liked.some(({ id }) => id === input.userId);
-      if (isMatch) {
-        const currentUser = await ctx.prisma.user.findUniqueOrThrow({
-          where: { id: input.userId },
-          select: likeUserSelect,
-        });
-        await createMatch(currentUser, likedUser);
-      }
-      return { displayName: likedUser.displayName, match: isMatch };
+      const unlikedUser = await ctx.prisma.user.update({
+        where: { id: input.targetUserId },
+        data: {
+          likedBy: {
+            disconnect: { id: input.userId },
+          },
+        },
+        select: likeUserSelect,
+      });
+      return { unlikedUser };
     }),
   updateOrCreate: t.procedure
     .input(
