@@ -25,7 +25,7 @@
     "db-push": {
       "cache": false
     },
-    "db-resetMatches": {
+    "db-reset": {
       "cache": false
     },
     "clean": {

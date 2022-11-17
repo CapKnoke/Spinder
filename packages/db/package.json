@@ -9,7 +9,7 @@
     "clean": "rm -rf .turbo node_modules",
     "db-push": "prisma db push",
     "db-generate": "prisma generate",
-    "db-resetMatches": "node ./scripts/resetMatches.mjs"
+    "db-reset": "node ./scripts/resetLikes.mjs"
   },
   "dependencies": {
     "@prisma/client": "^4.4.0"

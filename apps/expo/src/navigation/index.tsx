@@ -10,16 +10,16 @@ import LoginStack from './loginStack';
 import useAuth from '../hooks/useAuth';
 import { auth } from '../lib/firebase';
 
-import type { NewMatch } from '../types/trpc';
 import ChatMainScreen from '../screens/chatMain';
 import ChatDetailScreen from '../screens/chatDetail';
+import { Match } from '../hooks/useMatches';
 
 export type RootStackParamList = {
   LoginStack: undefined;
   Home: undefined;
   ChatMain: undefined;
   ChatDetail: undefined;
-  Match: { match: NewMatch };
+  Match: { match: Match };
 };
 
 const StackNavigation: React.FC = () => {

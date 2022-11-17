@@ -2,7 +2,6 @@ import * as React from 'react';
 import { View, Text, Button, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AntDesign } from '@expo/vector-icons';
-import { useTheme } from '@react-navigation/native';
 import Swiper from '@acme/react-native-deck-swiper';
 
 import MatchQuee from '../components/MatchQuee';
@@ -12,13 +11,15 @@ import useAuth from '../hooks/useAuth';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RootStackParamList } from '../navigation';
 import type { User } from '.prisma/client';
+import useMatches from '../hooks/useMatches';
 
 const HomeScreen: React.FC<NativeStackScreenProps<RootStackParamList, 'Home'>> = ({
   navigation,
 }) => {
   const { logout, user, setError } = useAuth();
-  const [quee, setQuee] = React.useState<User[] | null>(null);
+  const { newMatches } = useMatches();
 
+  const [quee, setQuee] = React.useState<User[] | null>(null);
   const swipeRef = React.useRef<Swiper<User>>(null);
 
   trpc.user.matchQuee.useQuery(user?.id, {
@@ -34,10 +35,17 @@ const HomeScreen: React.FC<NativeStackScreenProps<RootStackParamList, 'Home'>> =
     },
   });
 
+  React.useEffect(() => {
+    if (newMatches.length) {
+      navigation.navigate('Match', { match: newMatches[0] });
+    }
+  }, [newMatches]);
+
   return (
     <SafeAreaView className="flex-1 p-4">
-      <View className="py-2">
+      <View className="py-2 flex-row justify-evenly">
         <Button title="Log out" onPress={() => logout()} />
+        <Button title="Chat" onPress={() => navigation.navigate('ChatMain')} />
       </View>
       <MatchQuee quee={quee} swipeRef={swipeRef} />
       <View className="flex-row justify-evenly">

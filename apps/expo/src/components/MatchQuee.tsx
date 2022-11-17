@@ -8,6 +8,7 @@ import { trpc } from '../utils/trpc';
 import useAuth from '../hooks/useAuth';
 
 import type { User } from '.prisma/client';
+import { createMatch } from '../utils/firestore';
 
 const MatchQuee: React.FC<{ quee: User[] | null; swipeRef: React.RefObject<Swiper<User>> }> = ({
   quee,
@@ -15,7 +16,7 @@ const MatchQuee: React.FC<{ quee: User[] | null; swipeRef: React.RefObject<Swipe
 }) => {
   const { user, setError } = useAuth();
   const { colors } = useTheme();
-  const utils = trpc.useContext();
+
   const swipeMutation = trpc.user.swipe.useMutation({
     onSuccess(data) {
       console.log(`You swiped PASS on ${data.displayName}`);
@@ -24,30 +25,35 @@ const MatchQuee: React.FC<{ quee: User[] | null; swipeRef: React.RefObject<Swipe
       setError(err);
     },
   });
+
   const likeMutation = trpc.user.like.useMutation({
-    onSuccess({ match, displayName }) {
-      console.log(`You swiped Like on ${displayName}`);
-      if (match) {
+    async onSuccess({ match, likedUser }) {
+      console.log(`You swiped Like on ${likedUser.displayName}`);
+      console.log(match);
+      if (match && user) {
         console.log("It's a match!");
-        utils.user.newMatches.invalidate();
+        await createMatch(user, likedUser);
       }
     },
     onError(err) {
       setError(err);
     },
   });
+
   const handleSwipeLeft = (index: number) => {
     if (quee && user) {
       const swipedUser = quee[index];
       swipeMutation.mutate({ userId: user.id, targetUserId: swipedUser.id });
     }
   };
+
   const handleSwipeRight = (index: number) => {
     if (quee && user) {
       const swipedUser = quee[index];
       likeMutation.mutate({ userId: user.id, targetUserId: swipedUser.id });
     }
   };
+
   return (
     <View className="flex-1">
       {quee ? (

@@ -3,7 +3,6 @@ import { View, Text, Button, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '@react-navigation/native';
 
-import { trpc } from '../utils/trpc';
 import useAuth from '../hooks/useAuth';
 
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';

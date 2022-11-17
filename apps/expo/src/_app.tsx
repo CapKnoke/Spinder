@@ -5,6 +5,7 @@ import { NavigationContainer, DarkTheme, Theme } from '@react-navigation/native'
 import { AuthProvider } from './hooks/useAuth';
 import StackNavigation from './navigation';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { MatchProvider } from './hooks/useMatches';
 
 const theme: Theme = {
   dark: true,
@@ -22,12 +23,14 @@ export const App = () => {
   return (
     <TRPCProvider>
       <AuthProvider>
-        <SafeAreaProvider>
-          <NavigationContainer theme={theme}>
-            <StackNavigation />
-            <StatusBar style="light" />
-          </NavigationContainer>
-        </SafeAreaProvider>
+        <MatchProvider>
+          <SafeAreaProvider>
+            <NavigationContainer theme={theme}>
+              <StackNavigation />
+              <StatusBar style="light" />
+            </NavigationContainer>
+          </SafeAreaProvider>
+        </MatchProvider>
       </AuthProvider>
     </TRPCProvider>
   );

@@ -1,12 +1,13 @@
+import { ChatMessage, FirestoreMatch, FirestoreUser } from '../types/firestore';
 import { FirebaseOptions, initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import {
   collection,
-  CollectionReference,
   doc,
   DocumentData,
-  DocumentReference,
+  FirestoreDataConverter,
   getFirestore,
+  QueryDocumentSnapshot,
 } from 'firebase/firestore';
 
 const firebaseConfig: FirebaseOptions = {
@@ -20,11 +21,26 @@ const firebaseConfig: FirebaseOptions = {
 
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
-export const db = getFirestore(app);
+export const firestore = getFirestore(app);
 
-export const createCol = <T = DocumentData>(path: string, ...pathSegments: string[]) => {
-  return collection(db, path, ...pathSegments) as CollectionReference<T>;
+const converter = <T extends DocumentData>(): FirestoreDataConverter<T> => ({
+  toFirestore: (user: T) => user,
+  fromFirestore: (snapshot: QueryDocumentSnapshot) => {
+    return snapshot.data() as T;
+  },
+});
+
+const dataPoint = <T extends DocumentData>(collectionPath: string, ...pathSegments: string[]) =>
+  collection(firestore, collectionPath, ...pathSegments).withConverter(converter<T>());
+
+const db = {
+  users: dataPoint<FirestoreUser>('users'),
+  matches: dataPoint<FirestoreMatch>('matches'),
+  messages: (matchId: string) => dataPoint<ChatMessage>('matches', matchId, 'messages'),
+  user: (userId: string) => doc(dataPoint<FirestoreUser>('users'), userId),
+  match: (matchId: string) => doc(dataPoint<FirestoreMatch>('matches'), matchId),
+  message: (matchId: string, messageId: string) =>
+    doc(dataPoint<ChatMessage>('matches', matchId, 'messages'), messageId),
 };
-export const createDoc = <T = DocumentData>(path: string, ...pathSegments: string[]) => {
-  return doc(db, path, ...pathSegments) as DocumentReference<T>;
-};
+
+export default db;
