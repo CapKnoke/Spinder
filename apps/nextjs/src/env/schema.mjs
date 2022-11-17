@@ -8,6 +8,9 @@ import { z } from 'zod';
 export const serverSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']),
   SPOTIFY_CLIENT_ID: z.string(),
+  FIREBASE_PROJECT_ID: z.string(),
+  FIREBASE_PRIVATE_KEY: z.string(),
+  FIREBASE_CLIENT_EMAIL: z.string(),
 });
 
 export const deployedServerSchema = z.object({

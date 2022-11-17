@@ -2,9 +2,9 @@ import * as React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import LoginScreen from '../screens/login';
-import useAuth from '../hooks/useAuth';
 import RegisterScreen from '../screens/register';
 import SpotifyConnectScreen from '../screens/spotifyConnect';
+import useAuth from '../hooks/useAuth';
 
 export type LoginStackParamList = {
   SpotifyConnect: undefined;

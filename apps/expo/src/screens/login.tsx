@@ -1,15 +1,13 @@
 import * as React from 'react';
 import { View, Text, ImageBackground, StyleSheet, TouchableOpacity } from 'react-native';
+import { useTheme } from '@react-navigation/native';
+
+import useAuth from '../hooks/useAuth';
 
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { LoginStackParamList } from '../navigation/loginStack';
 
-import useAuth from '../hooks/useAuth';
-import { useTheme } from '@react-navigation/native';
-
-const LoginScreen: React.FC<NativeStackScreenProps<LoginStackParamList, 'Login'>> = ({
-  navigation,
-}) => {
+const LoginScreen: React.FC<NativeStackScreenProps<LoginStackParamList, 'Login'>> = () => {
   const { signInWithGoogle } = useAuth();
   const { colors } = useTheme();
   return (

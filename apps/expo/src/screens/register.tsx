@@ -1,18 +1,16 @@
 import * as React from 'react';
 import { View, Text, Button } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTheme } from '@react-navigation/native';
+
+import UpdateUserInfo from '../components/UpdateUserInfo';
+import useAuth from '../hooks/useAuth';
 
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { LoginStackParamList } from '../navigation/loginStack';
 
-import useAuth from '../hooks/useAuth';
-import UpdateUserInfo from '../components/UpdateUserInfo';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useTheme } from '@react-navigation/native';
-
-const RegisterScreen: React.FC<NativeStackScreenProps<LoginStackParamList, 'Register'>> = ({
-  navigation,
-}) => {
+const RegisterScreen: React.FC<NativeStackScreenProps<LoginStackParamList, 'Register'>> = () => {
   const { logout, user } = useAuth();
   const { colors } = useTheme();
   return (

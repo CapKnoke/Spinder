@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { View, Image, Text, useWindowDimensions, TouchableOpacity } from 'react-native';
-import { FlashList } from '@shopify/flash-list';
-import { useTheme } from '@react-navigation/native';
-import { AntDesign } from '@expo/vector-icons';
 import { TabView, TabBar, NavigationState, Route, SceneRendererProps } from 'react-native-tab-view';
+import { useTheme } from '@react-navigation/native';
+import { FlashList } from '@shopify/flash-list';
+import { AntDesign } from '@expo/vector-icons';
 
 import type {
   SpotifyArtist,
@@ -13,8 +13,8 @@ import type {
   SpotifyTopTracks,
   SpotifyTrack,
   SpotifyUserData,
-} from 'src/types/spotify';
-import { User } from '.prisma/client';
+} from '../types/spotify';
+import type { User } from '.prisma/client';
 
 const TrackItem: React.FC<{ track: SpotifyTrack }> = ({ track }) => {
   const albumImage = track.album.images[1];
@@ -105,6 +105,9 @@ const TopTracksSection: React.FC<{
         data={topTracks}
         estimatedItemSize={111}
         pointerEvents="box-none"
+        ItemSeparatorComponent={() => (
+          <View style={{ height: 1, backgroundColor: colors.border }} />
+        )}
       />
     </View>
   );
@@ -125,6 +128,9 @@ const TopArtistsSection: React.FC<{
         data={topArtists}
         estimatedItemSize={111}
         pointerEvents="box-none"
+        ItemSeparatorComponent={() => (
+          <View style={{ height: 1, backgroundColor: colors.border, opacity: 0.4 }} />
+        )}
       />
     </View>
   );
@@ -145,6 +151,9 @@ const RecentlyPlayedSection: React.FC<{
         data={recentlyPlayed}
         estimatedItemSize={111}
         pointerEvents="box-none"
+        ItemSeparatorComponent={() => (
+          <View style={{ height: 1, backgroundColor: colors.border }} />
+        )}
       />
     </View>
   );

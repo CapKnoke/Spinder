@@ -11,11 +11,12 @@ import {
   User as FireBaseUser,
 } from 'firebase/auth';
 
-import { auth } from '../lib/firebase';
 import { trpc } from '../utils/trpc';
-import { TRPCClientErrorLike } from '@trpc/client';
-import { AppRouter } from '@acme/api';
-import { User } from '.prisma/client';
+import { auth } from '../lib/firebase';
+
+import type { TRPCClientErrorLike } from '@trpc/client';
+import type { AppRouter } from '@acme/api';
+import type { User } from '.prisma/client';
 
 const EXPO_REDIRECT_PARAMS = { useProxy: true, projectNameForProxy: '@capknoke/tinder-clone' };
 const NATIVE_REDIRECT_PARAMS = { native: 'dev.sindrebakken.tinderclone://' };
@@ -25,9 +26,7 @@ const redirectUri = AuthSession.makeRedirectUri(REDIRECT_PARAMS);
 
 interface IAuthContext {
   user: User | null;
-  setUser: React.Dispatch<React.SetStateAction<User | null>>;
   profileComplete: boolean;
-  setProfileComplete: React.Dispatch<React.SetStateAction<boolean>>;
   googleUserInfo: FireBaseUser | null;
   error: Error | TRPCClientErrorLike<AppRouter> | null;
   setError: React.Dispatch<React.SetStateAction<Error | TRPCClientErrorLike<AppRouter> | null>>;
@@ -112,9 +111,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode[] | React.ReactN
   const memoedValue = React.useMemo(
     () => ({
       user,
-      setUser,
       profileComplete,
-      setProfileComplete,
       loading,
       setLoading,
       error,
@@ -125,9 +122,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode[] | React.ReactN
     }),
     [
       user,
-      setUser,
       profileComplete,
-      setProfileComplete,
       loading,
       setLoading,
       error,
